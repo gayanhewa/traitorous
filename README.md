@@ -8,7 +8,7 @@ hh_client and some hacks around namespacing issues until they get fixed by
 HHVM.
 
 Hack is a new frontier, so we're dawning our outlaw hats and completely
-ditching the hip trends in PHP and doing the right thing.
+ditching the hip trends in PHP and setting off down our own path.
 
 Thoughts
 --------
