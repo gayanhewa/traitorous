@@ -1,0 +1,13 @@
+{
+    "name": "traitorous/traitorous",
+    "require": { },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src"
+        }
+    },
+    "minimum-stability": "dev"
+}
