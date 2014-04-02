@@ -11,21 +11,21 @@ use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\LeftMappable;
 
-interface Validation<E, S> extends Functor<S>,
-                                   Applicative<S>,
-                                   Monad<S>,
-                                   SemiGroup,
-                                   Eq,
-                                   Ord,
-                                   Show,
-                                   LeftMappable<E>,
-                                   KeyedEnum
+interface Validation<Te, Ts> extends Functor<Ts>,
+                                     Applicative<Ts>,
+                                     Monad<Ts>,
+                                     SemiGroup,
+                                     Eq,
+                                     Ord,
+                                     Show,
+                                     LeftMappable<Te>,
+                                     KeyedEnum
 {
 
     const FAILURE = 0;
     const SUCCESS = 1;
 
-    public function cata<A>((function(E): A) $failure,
-                            (function(S): A) $success): A;
+    public function cata<Tb>((function(Te): Tb) $failure,
+                             (function(Ts): Tb) $success): Tb;
 
 }

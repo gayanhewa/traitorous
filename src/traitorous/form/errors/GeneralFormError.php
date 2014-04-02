@@ -11,10 +11,10 @@ final class GeneralFormError implements FormError {
         return $this->_error;
     }
 
-    public function cata<A>(
-        (function(string, string): A) $k,
-        (function(string): A) $g
-    ): A
+    public function cata<T>(
+        (function(string, string): T) $k,
+        (function(string): T) $g
+    ): T
     {
         return $g($this->_error);
     }

@@ -8,26 +8,26 @@ use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 use traitorous\Validation;
 
-final class Success<E, S> implements Validation<E, S> {
+final class Success<Te, Ts> implements Validation<Te, Ts> {
 
-    public function __construct(private $_x) { }
+    public function __construct(private \Ts $_x) { }
 
-    public function map<B>((function(A): B) $f): Validation<E, B> {
+    public function map<Tb>((function(Ts): Tb) $f): Validation<Te, Tb> {
         return new Success($f($this->_x));
     }
 
-    public function ap<B, C>(Applicative<B> $next): Validation<E, C> {
+    public function ap<Tb, Tc>(Applicative<Tb> $next): Validation<Te, Tc> {
         return $next->cata(
             () ==> $next,
             () ==> $next->map($this->_x)
         );
     }
 
-    public function flatMap<B>((function(A): Validation<E, B>) $f): Validation<E, B> {
+    public function flatMap<Tb>((function(Ts): Validation<Te, Tb>) $f): Validation<Te, Tb> {
         return $f($this->_x);
     }
 
-    public function leftMap<T>((function(A): T) $f): Validation<T, S> {
+    public function leftMap<Tb>((function(Ts): Tb) $f): Validation<Tb, Ts> {
         return $this;
     }
 
@@ -53,8 +53,8 @@ final class Success<E, S> implements Validation<E, S> {
         return "Success({$this->_x->show()})";
     }
 
-    public function cata<A>((function(E): A) $failure,
-                            (function(S): A) $success): A
+    public function cata<Tb>((function(Te): Tb) $failure,
+                             (function(Ts): Tb) $success): Tb
     {
         return $success($this->_x);
     }

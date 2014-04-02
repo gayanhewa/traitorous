@@ -14,7 +14,7 @@ final class FormErrors implements Monoid {
     }
 
     public function add(Add $other): FormErrors {
-        invariant($other instanceof FormErrors);
+        invariant($other instanceof FormErrors, "Must receive a FormErrors");
         return new FormErrors(Vector::fromArray(array_merge(
             $this->_errors->toArray(),
             $other->errors()->toArray()

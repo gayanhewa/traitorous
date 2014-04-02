@@ -12,19 +12,19 @@ use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\Unboxable;
 
-interface Finishable<A> extends SemiGroup,
+interface Finishable<T> extends SemiGroup,
                                 Monoid,
-                                Functor,
-                                Applicative,
-                                Monad,
+                                Functor<T>,
+                                Applicative<T>,
+                                Monad<T>,
                                 Show,
                                 Eq,
                                 Ord,
-                                Unboxable,
+                                Unboxable<T>,
                                 KeyedEnum
 {
     const DONE = 0;
     const MORE = 1;
 
-    public function cata<B>((function(A): B) $done, (function(A): B) $more): B;
+    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb;
 }

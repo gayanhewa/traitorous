@@ -3,8 +3,8 @@ namespace traitorous\algebraic;
 
 use traitorous\outlaw\Zero;
 
-interface MonadPlus<A> extends Monad<A>, Zero {
+interface MonadPlus<T> extends Monad<T>, Zero {
 
-    public function mplus(MonadPlus<A> $other): MonadPlus<A>;
+    public function mplus(MonadPlus<T> $other): MonadPlus<T>;
 
 }

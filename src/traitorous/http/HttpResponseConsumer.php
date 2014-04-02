@@ -20,12 +20,12 @@ final class HttpResponseConsumer {
                     ->_renderView($response);
     }
 
-    private function _setStatusCode(HttpResponse $response): this {
+    private function _setStatusCode(HttpResponse $response): HttpResponseConsumer {
         http_response_code($response->statusCode());
         return $this;
     }
 
-    private function _setHeaders(HttpResponse $response): this {
+    private function _setHeaders(HttpResponse $response): HttpResponseConsumer {
         foreach ($response->headers()->toArray() as $header) {
             $this->_headers->set($header);
         }

@@ -3,10 +3,10 @@ namespace traitorous\algebraic;
 
 use traitorous\outlaw\Zero;
 
-interface Alternative<A> extends Zero, Applicative<A> {
+interface Alternative<T> extends Zero, Applicative<T> {
 
-    public function orThis(Alternative<A> $other): Alternative<A>;
+    public function orThis(Alternative<T> $other): Alternative<T>;
 
-    public function orElse((function(): Alternative<A>) $f): Alternative<A>;
+    public function orElse((function(): Alternative<T>) $f): Alternative<T>;
 
 }

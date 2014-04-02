@@ -8,9 +8,9 @@ use traitorous\outlaw\Add;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 
-final class More<A> implements Finishable<A> {
+final class More<T> implements Finishable<T> {
 
-    public function __construct(private $_x): void { }
+    public function __construct(private \T $_x): void { }
 
     public function add(Add $other): this {
         return $other->cata(
@@ -19,7 +19,7 @@ final class More<A> implements Finishable<A> {
         );
     }
 
-    public function ap<B, C>(Applicative<B> $next): Applicative<C> {
+    public function ap<Tb, Tc>(Applicative<Tb> $next): Applicative<Tc> {
         return $next->cata(
             (Add $y) ==> {
                 $f = $this->_x; /* @var callable $f */
@@ -32,11 +32,11 @@ final class More<A> implements Finishable<A> {
         );
     }
 
-    public function map<B>((function(A): B) $f): Finishable<B> {
+    public function map<Tb>((function(T): Tb) $f): Finishable<Tb> {
         return new More($f($this->_x));
     }
 
-    public function flatMap<B>((function(A): Finishable<B>) $f): Finishable<B> {
+    public function flatMap<Tb>((function(T): Finishable<Tb>) $f): Finishable<Tb> {
         $result = $f($this->_x);
     }
 
@@ -66,11 +66,11 @@ final class More<A> implements Finishable<A> {
         return "More({$this->_x->show()})";
     }
 
-    public function unbox(): A {
+    public function unbox(): T {
         return $this->_x;
     }
 
-    public function cata<B>((function(A): B) $done, (function(A): B) $more): B {
+    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb {
         return $more($this->_x);
     }
 

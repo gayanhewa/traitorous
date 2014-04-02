@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Containable<A> {
+interface Containable<T> {
 
-    public function contains(A $a): bool;
+    public function contains(T $a): bool;
 
 }
