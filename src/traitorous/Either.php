@@ -24,5 +24,5 @@ interface Either<Tl, Tr> extends Functor<Tr>,
     const LEFT  = 0;
     const RIGHT = 1;
 
-    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): Tb;
+    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): \Tb;
 }

@@ -91,7 +91,7 @@ final class None<T> implements Option<T> {
         );
     }
 
-    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb {
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): \Tb {
         return $none();
     }
 }

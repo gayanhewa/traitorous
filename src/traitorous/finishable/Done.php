@@ -61,7 +61,7 @@ final class Done<T> implements Finishable<T> {
         return $this->_x;
     }
 
-    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb {
+    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): \Tb {
         return $done($this->_x);
     }
 

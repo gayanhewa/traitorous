@@ -26,5 +26,5 @@ interface Finishable<T> extends SemiGroup,
     const DONE = 0;
     const MORE = 1;
 
-    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb;
+    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): \Tb;
 }

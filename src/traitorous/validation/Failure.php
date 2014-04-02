@@ -51,17 +51,17 @@ final class Failure<Te, Ts> implements Validation<Te, Ts> {
         return "Failure({$this->_x->show()})";
     }
 
-    public function cata<Tb>((function(Te): Tb) $failure,
-                             (function(Ts): Tb) $success): Tb
-    {
-        return $failure($this->_x);
-    }
-
     public function add(Add $other): this {
         return $this->cata(
             ($y) ==> new Failure($this->_x->add($y)),
             ($y) ==> new Success($this->_x->add($y))
         );
+    }
+
+    public function cata<Tb>((function(Te): Tb) $failure,
+                             (function(Ts): Tb) $success): \Tb
+    {
+        return $failure($this->_x);
     }
 
 }
