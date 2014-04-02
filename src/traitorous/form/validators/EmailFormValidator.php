@@ -5,6 +5,7 @@ use traitorous\form\KeyedFormValidator;
 use traitorous\form\FormErrors;
 use traitorous\matcher\string\StringRegexMatcher;
 use traitorous\Option;
+use traitorous\Validation;
 
 final class EmailFormValidator implements KeyedFormValidator {
 
