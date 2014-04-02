@@ -18,10 +18,10 @@ final class KeyedFormError implements FormError {
         return $this->_key;
     }
 
-    public function cata<A>(
-        (function(string, string): A) $k,
-        (function(string): A) $g
-    ): A
+    public function cata<T>(
+        (function(string, string): T) $k,
+        (function(string): T) $g
+    ): T
     {
         return $k($this->_key, $this->_error);
     }

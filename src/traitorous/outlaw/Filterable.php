@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Filterable<A> {
+interface Filterable<T> {
 
-    public function filter((function(A): bool) $p): this;
+    public function filter((function(T): bool) $p): Filterable<T>;
 
 }

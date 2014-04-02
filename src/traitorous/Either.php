@@ -1,4 +1,4 @@
-<?php
+<?hh // strict
 namespace traitorous;
 
 use traitorous\algebraic\Applicative;
@@ -11,18 +11,18 @@ use traitorous\outlaw\Show;
 use traitorous\outlaw\LeftMappable;
 use traitorous\outlaw\Unwrappable;
 
-interface Either<L, R> extends Functor<R>,
-                               Applicative<R>,
-                               Monad<R>,
-                               Eq,
-                               Ord,
-                               Show,
-                               LeftMappabe<L>,
-                               Unwrappable<R>,
-                               KeyedEnum
+interface Either<Tl, Tr> extends Functor<Tr>,
+                                 Applicative<Tr>,
+                                 Monad<Tr>,
+                                 Eq,
+                                 Ord,
+                                 Show,
+                                 LeftMappable<Tl>,
+                                 Unwrappable<Tr>,
+                                 KeyedEnum
 {
     const LEFT  = 0;
     const RIGHT = 1;
 
-    public function cata<B>((function(L): B) $left, (function(R): B) $right): B;
+    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): Tb;
 }

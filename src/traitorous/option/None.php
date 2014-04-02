@@ -11,7 +11,7 @@ use traitorous\outlaw\Add;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 
-final class None<A> implements Option<A> {
+final class None<T> implements Option<T> {
 
     public function getEnumKey(): int {
         return Option::NONE;
@@ -25,27 +25,27 @@ final class None<A> implements Option<A> {
         return $this;
     }
 
-    public function map<B>((function(A): B) $f): Option<B> {
+    public function map<Tb>((function(T): Tb) $f): Option<Tb> {
         return $this;
     }
 
-    public function ap<B, C>(Applicative<B> $other): Option<C> {
+    public function ap<Tb, Tc>(Applicative<Tb> $other): Option<Tc> {
         return $this;
     }
 
-    public function orThis(Alternative<A> $other): Option<A> {
+    public function orThis(Alternative<T> $other): Option<T> {
         return $other;
     }
 
-    public function orElse((function(): Alternative<A>) $other): Option<A> {
+    public function orElse((function(): Alternative<T>) $other): Option<T> {
         return $other();
     }
 
-    public function flatMap<B>((function(A): Option<B>) $f): Option<B> {
+    public function flatMap<Tb>((function(T): Option<Tb>) $f): Option<Tb> {
         return $this;
     }
 
-    public function mplus(MonadPlus<A> $other): Option<A> {
+    public function mplus(MonadPlus<T> $other): Option<T> {
         return $other;
     }
 
@@ -65,15 +65,15 @@ final class None<A> implements Option<A> {
         return false;
     }
 
-    public function getOrElse((function(): A) $f): A {
+    public function getOrElse((function(): T) $f): \T {
         return $f();
     }
 
-    public function getOrDefault(\A $default): A {
+    public function getOrDefault(\T $default): \T {
         return $default;
     }
 
-    public function filter((function(A): bool) $predicate): Option<A> {
+    public function filter((function(T): bool) $predicate): Option<T> {
         return $this;
     }
 
@@ -91,7 +91,7 @@ final class None<A> implements Option<A> {
         );
     }
 
-    public function cata<B>((function(): B) $none, (function(A): B) $some) {
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb {
         return $none();
     }
 }

@@ -5,7 +5,7 @@ use traitorous\form\errors\KeyedFormError;
 use traitorous\form\FormErrors;
 use traitorous\form\KeyedFormValidator;
 use traitorous\Option;
-use traitorous\Validation
+use traitorous\Validation;
 use traitorous\validation\Failure;
 use traitorous\validation\Success;
 

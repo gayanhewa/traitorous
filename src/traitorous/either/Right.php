@@ -7,11 +7,11 @@ use traitorous\Either;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 
-final class Right<L, R> implements Either<L, R> {
+final class Right<Tl, Tr> implements Either<Tl, Tr> {
 
-    public function __construct(const private $_inner) { }
+    public function __construct(private \Tr $_inner) { }
 
-    public function ap<B, C>(Applicative<B> $next): Applicative<C> {
+    public function ap<Tb, Tc>(Applicative<Tb> $next): Applicative<Tc> {
         return $next->map($this->_inner);
     }
 
@@ -22,11 +22,11 @@ final class Right<L, R> implements Either<L, R> {
         );
     }
 
-    public function map<B>((function(A): B) $f) {
+    public function map<Tb>((function(Tr): Tb) $f): Either<Tl, Tb> {
         return new Right($f($this->_inner));
     }
 
-    public function leftMap<T>((function(A): T) $f): Either<T, R> {
+    public function leftMap<Tb>((function(Tr): Tb) $f): Either<Tl, Tb> {
         return $this;
     }
 
@@ -34,7 +34,7 @@ final class Right<L, R> implements Either<L, R> {
         return Either::RIGHT;
     }
 
-    public function flatMap<B>((function(A): Either<L, B>) $f): Either<L, B> {
+    public function flatMap<Tb>((function(Tr): Either<Tl, Tb>) $f): Either<Tl, Tb> {
         return $f($this->_inner);
     }
 
@@ -45,11 +45,11 @@ final class Right<L, R> implements Either<L, R> {
         );
     }
 
-    public function getOrElse((function(): A) $f): A {
+    public function getOrElse((function(): Tr) $f): Tr {
         return $this->_inner;
     }
 
-    public function getOrDefault(A $default): A {
+    public function getOrDefault(\Tr $default): Tr {
         return $this->_inner;
     }
 
@@ -57,7 +57,7 @@ final class Right<L, R> implements Either<L, R> {
         return "Right({$this->_inner})";
     }
 
-    public function cata<B>((function(L): B) $left, (function(R): B) $right): B {
+    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): Tb {
         return $right($this->_inner);
     }
 

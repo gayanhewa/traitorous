@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\algebraic;
 
-interface Monad<A> extends Applicative<A> {
+interface Monad<T> extends Applicative<T> {
 
-    public function flatMap<B>((function(A): Monad<B>) $f): Monad<B>;
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Monad<Tb>;
 
 }

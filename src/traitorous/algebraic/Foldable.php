@@ -1,12 +1,12 @@
 <?hh // strict
 namespace traitorous\algebraic;
 
-interface Foldable<A> {
+interface Foldable<T> {
 
-    public function foldMap<M as Monoid>(M $zero, (function(A): M) $f): M;
+    public function foldMap<Tm as Monoid>(Tm $zero, (function(T): Tm) $f): Tm;
 
-    public function foldr<B>((function(A, B): B) $f, B $init): B;
+    public function foldr<Tb>((function(T, Tb): Tb) $f, Tb $init): Tb;
 
-    public function foldl<B>((function(B, A): B) $f, B $init): B;
+    public function foldl<Tb>((function(Tb, T): Tb) $f, Tb $init): Tb;
 			
 }

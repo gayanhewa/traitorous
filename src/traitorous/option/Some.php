@@ -10,7 +10,7 @@ use traitorous\outlaw\Add;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 
-final class Some<A> implements Option<A> {
+final class Some<T> implements Option<T> {
 
     public function __construct(private $_inner): void { }
 
@@ -29,23 +29,23 @@ final class Some<A> implements Option<A> {
         return new None();
     }
 
-    public function map<B>((function(A): B) $f): Option<B> {
+    public function map<Tb>((function(T): Tb) $f): Option<Tb> {
         return new Some($f($this->_inner));
     }
 
-    public function ap<B, C>(Applicative<B> $other): Option<C> {
+    public function ap<Tb, Tc>(Applicative<Tb> $other): Option<Tc> {
         return $other->map($this->_inner);
     }
 
-    public function orThis(Alternative<A> $other): Option<A> {
+    public function orThis(Alternative<T> $other): Option<T> {
         return $this;
     }
 
-    public function orElse((function(): Alternative<A>) $other): Option<A> {
+    public function orElse((function(): Alternative<T>) $other): Option<T> {
         return $this;
     }
 
-    public function flatMap<B>((function(A): Option<B>) $f): Option<B> {
+    public function flatMap<Tb>((function(T): Option<Tb>) $f): Option<Tb> {
         return $f($this->_inner);
     }
 
@@ -73,15 +73,15 @@ final class Some<A> implements Option<A> {
         return true;
     }
 
-    public function getOrElse((function(): A) $f): A {
+    public function getOrElse((function(): T) $f): \T {
         return $this->_inner;
     }
 
-    public function getOrDefault(\A $default): A {
+    public function getOrDefault(\T $default): \T {
         return $this->_inner;
     }
 
-    public function filter((function(A): bool) $predicate): this {
+    public function filter((function(T): bool) $predicate): Option<T> {
         if ($predicate($this->_inner)) {
             return $this;
         } else {
@@ -103,7 +103,7 @@ final class Some<A> implements Option<A> {
         );
     }
 
-    public function cata<B>((function(): B) $none, (function(A): B) $some) {
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb {
         return $some($this->_inner);
     }
 }
