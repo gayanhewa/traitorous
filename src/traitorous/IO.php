@@ -26,7 +26,7 @@ final class IO<T> implements Functor<T>, Applicative<T>, Monad<T> {
         return new IO(() ==> $f($this->unsafePerform())->unsafePerform());
     }
 
-    public function unsafePerform(): A {
+    public function unsafePerform(): \T {
         $redeemer = $this->_f;
         return $redeemer();
     }

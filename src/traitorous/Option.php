@@ -35,5 +35,5 @@ interface Option<T> extends SemiGroup,
     const NONE = 0;
     const SOME = 1;
 
-    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb;
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): \Tb;
 }

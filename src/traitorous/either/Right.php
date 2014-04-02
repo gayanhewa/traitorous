@@ -57,7 +57,7 @@ final class Right<Tl, Tr> implements Either<Tl, Tr> {
         return "Right({$this->_inner})";
     }
 
-    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): Tb {
+    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): \Tb {
         return $right($this->_inner);
     }
 
