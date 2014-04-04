@@ -3,10 +3,10 @@ namespace traitorous\outlaw;
 
 interface Container {
 
-    public function length();
+    public function length(): int;
 
-    public function isEmpty();
+    public function isEmpty(): bool;
 
-    public function nonEmpty();
+    public function nonEmpty(): bool;
 
 }

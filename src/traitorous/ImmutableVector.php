@@ -136,6 +136,10 @@ final class ImmutableVector<T> implements Functor<T>,
         );
     }
 
+    public function toArray(): array {
+        return $this->_n->toArray();
+    }
+
     public function at(int $offset): Option<T> {
         try {
             return new Some($this->_n->at($offset));
