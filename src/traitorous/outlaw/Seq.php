@@ -3,8 +3,8 @@ namespace traitorous\outlaw;
 
 interface Seq<T> {
 
-    public function head(): T;
+    public function head(): \T;
 
-    public function tail(): this;
+    public function tail(): Seq<T>;
 
 }

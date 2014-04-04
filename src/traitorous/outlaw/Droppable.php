@@ -5,6 +5,6 @@ interface Droppable<T> {
 
     public function drop(int $n): this;
 
-    public function dropWhile((funciton(T): bool) $f): Droppable<T>;
+    public function dropWhile((function(T): bool) $f): Droppable<T>;
 
 }
