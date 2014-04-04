@@ -34,6 +34,7 @@ use \traitorous\option\None;
 use \traitorous\option\OptionFactory;
 
 use \traitorous\ImmutableVector;
+use \traitorous\ImmutableMap;
 
 abstract class Layout extends XhpView {
 
@@ -210,7 +211,8 @@ final class PostMiddleware extends HttpRouteMiddleware {
 
 }
 
-$test = new ImmutableVector();
+$test1 = new ImmutableVector();
+$test2 = new ImmutableMap();
 
 $request  = new HttpRequest();
 $consumer = new HttpResponseConsumer();
