@@ -33,6 +33,8 @@ use \traitorous\option\Some;
 use \traitorous\option\None;
 use \traitorous\option\OptionFactory;
 
+use \traitorous\ImmutableVector;
+
 abstract class Layout extends XhpView {
 
     abstract public function content(): :xhp;
@@ -207,6 +209,8 @@ final class PostMiddleware extends HttpRouteMiddleware {
     }
 
 }
+
+$test = new ImmutableVector();
 
 $request  = new HttpRequest();
 $consumer = new HttpResponseConsumer();
