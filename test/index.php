@@ -18,6 +18,7 @@ use \traitorous\http\methods\HttpGetMethod;
 use \traitorous\http\methods\HttpPostMethod;
 use \traitorous\http\HttpRouter;
 use \traitorous\http\responses\OkResponse;
+use \traitorous\http\responses\MissingResponse;
 use \traitorous\http\HttpResponseConsumer;
 use \traitorous\http\routes\HttpRouteRule;
 use \traitorous\http\routes\rules\PathRule;
@@ -79,8 +80,11 @@ final class Index extends Controller {
     public function handle(HttpRequest $request): HttpResponse {
         $response = new OkResponse(new IndexView());
         $session  = $request->session("secret");
+        $flash    = $request->flash("secret");
         $visits   = $session->get("visits")->map(($n) ==> (int) $n)->getOrDefault(0);
-        return $response->withSession($session->set("visits", $visits + 1));
+        return $response
+            ->withSession($session->set("visits", $visits + 1))
+            ->withFlash($flash->set("ghost", "value"));
     }
 
 }
@@ -186,7 +190,7 @@ final class Missing extends Controller {
     }
 
     public function handle(HttpRequest $request): HttpResponse {
-        return new OkResponse(new StringView("Unable to find specified route"));
+        return new MissingResponse(new StringView("Unable to find specified route"));
     }
 
 }
@@ -226,7 +230,6 @@ $router = new HttpRouter(Vector {
     new Login()
 });
 
-/** @var HttpRequestHandler $route */
 $route = $router
     ->route($request)
     ->getOrElse(() ==> new Missing());

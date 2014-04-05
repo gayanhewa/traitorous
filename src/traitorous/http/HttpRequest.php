@@ -7,6 +7,8 @@ use traitorous\Option;
 use traitorous\option\OptionFactory;
 use traitorous\option\Some;
 use traitorous\option\None;
+use traitorous\http\sessions\SignedSession;
+use traitorous\http\sessions\FlashSession;
 
 class HttpRequest {
 
@@ -73,8 +75,12 @@ class HttpRequest {
         return $this->_post;
     }
 
-    public function session(string $secret): Session {
-        return Session::fromRequest($secret, $this);
+    public function session(string $secret): SignedSession {
+        return SignedSession::fromRequest($secret, $this);
     }
+
+    public function flash(string $secret): FlashSession {
+        return FlashSession::fromRequest($secret, $this);
+    } 
 
 }
