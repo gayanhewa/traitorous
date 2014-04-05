@@ -10,6 +10,10 @@ HHVM.
 Hack is a new frontier, so we're dawning our outlaw hats and completely
 ditching the hip trends in PHP and setting off down our own path.
 
+![The Traitorous Eight](http://upload.wikimedia.org/wikipedia/en/6/66/The_Traitorous_Eight.jpg)
+
+[The Traitorous Eight](http://en.wikipedia.org/wiki/Traitorous_eight) seen above.
+
 Thoughts
 --------
 
