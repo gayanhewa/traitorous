@@ -1,12 +1,14 @@
 <?hh // strict
 namespace traitorous\http;
 
+use traitorous\http\sessions\SignedSession;
+use traitorous\http\sessions\FlashSession;
 use traitorous\ImmutableMap;
 use traitorous\Option;
 use traitorous\option\Some;
 use traitorous\option\None;
 
-final class Session {
+abstract class Session {
 
     public function __construct(
         private string $_secret,
@@ -22,11 +24,11 @@ final class Session {
     }
 
     public function withFreshData(ImmutableMap<string, string> $data): Session {
-        return new Session($this->_secret, $data);
+        return new static($this->_secret, $data);
     }
 
     public function withData(ImmutableMap<string, string> $data): Session {
-        return new Session($this->_secret, $this->_data->add($data));
+        return new static($this->_secret, $this->_data->add($data));
     }
 
     public function set($key, $value): Session {
@@ -40,7 +42,7 @@ final class Session {
     }
 
     public function clear(): Session {
-        return new Session($this->_secret, $data);
+        return new static($this->_secret, $data);
     }
 
     public function toJson(): string {
@@ -51,14 +53,19 @@ final class Session {
         return Session::sessionSignature($this->_secret, $this->_data);
     }
 
-    public static function fromRequest(string $secret, HttpRequest $request): Session {
+    abstract public function cata<T>((function(): T) $s, (function(): T) $f): \T;
+
+    public static function fromRequest(string $key,
+                                        string $secret,
+                                        HttpRequest $request): ImmutableMap<string, string>
+    {
         return $request
             ->getHeadersObject()
             ->get("cookie")
             ->map(($header) ==> Cookie::parse($header))
-            ->flatMap(($cookies) ==> $cookies->get("session"))
+            ->flatMap(($cookies) ==> $cookies->get($key))
             ->flatMap(Session::genSessionVerifier($secret))
-            ->getOrElse(() ==> new Session($secret, new ImmutableMap()));
+            ->getOrElse(() ==> new ImmutableMap());
     }
 
     public static function genSessionVerifier(string $key): (function(string): Option<ImmutableMap<string, string>>) {
@@ -68,7 +75,7 @@ final class Session {
                 $session   = new ImmutableMap(json_decode(substr($session, 64), true));
                 $generated = Session::sessionSignature($key, $session);
                 if ($supplied === $generated) {
-                    return new Some(new Session($key, $session));
+                    return new Some($session);
                 } else {
                     return new None();
                 }
@@ -78,7 +85,7 @@ final class Session {
         };
     }
 
-    public function sessionSignature(string $key, ImmutableMap<string, string> $session): string {
+    public static function sessionSignature(string $key, ImmutableMap<string, string> $session): string {
         $keys = $session->keys()->toArray();
         sort($keys);
         return hash_hmac(

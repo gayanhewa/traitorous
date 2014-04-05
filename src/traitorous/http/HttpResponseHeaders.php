@@ -22,10 +22,10 @@ final class HttpResponseHeaders {
         return headers_sent();
     }
 
-    public function set(HttpResponseHeader $header): void {
+    public function set(HttpResponseHeader $header, bool $replace = true): void {
         $key   = $header->getKey();
         $value = $header->getValue();
-        header("{$key}: {$value}");
+        header("{$key}: {$value}", $replace);
     }
 
     public function remove(HttpResponseHeader $header): void {
