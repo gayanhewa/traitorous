@@ -33,7 +33,7 @@ final class ValuesMatchFormValidator implements FormValidator {
 
     private function _getTuplePair(ImmutableMap<string, string> $data): Option<(string, string)> {
         return $data->get($this->_k1)->flatMap(($v1) ==> {
-                return $data->get($this->_k2)->map(($v2) ==> tuple($v1, $v2))
+            return $data->get($this->_k2)->map(($v2) ==> tuple($v1, $v2));
         });
     }
 
