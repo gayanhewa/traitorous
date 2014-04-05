@@ -73,14 +73,8 @@ class HttpRequest {
         return $this->_post;
     }
 
-    public function getSession(): Option<ImmutableMap<string, string>> {
-        return $this->_headers
-            ->get("cookie")
-            ->map($parseCookie)
-            ->flatMap(($cookies) ==> $cookies->get("session"))
-            ->map($dropSignatureAndParseJson)
-            ->map($arrayToImmutableMap)
-            ->getOrElse(() ==> new ImmutableMap());
+    public function session(string $secret): Session {
+        return Session::fromRequest($secret, $this);
     }
 
 }

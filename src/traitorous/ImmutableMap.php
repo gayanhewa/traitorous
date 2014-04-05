@@ -33,7 +33,7 @@ final class ImmutableMap<Tk, Tv> implements Monoid,
 
     public function add(Add $other): ImmutableMap<Tk, Tv> {
         invariant($other instanceof ImmutableMap<Tk, Tv>, "Expected ImmutableMap<Tk, Tv>");
-        return $this->conj($other);
+        return new ImmutableMap(array_merge($this->toArray(), $other->toArray()));
     }
 
     public function conj(Conjoinable $ys): ImmutableMap<Tk, Tv> {
