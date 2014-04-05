@@ -4,6 +4,7 @@ namespace traitorous\form;
 use traitorous\http\HttpRequest;
 use traitorous\form\FormErrors;
 use traitorous\form\FormValidator;
+use traitorous\ImmutableMap;
 use traitorous\Validation;
 use traitorous\validation\Success;
 use traitorous\validation\Failure;
@@ -15,23 +16,23 @@ use traitorous\option\OptionFactory;
 abstract class Form<T> {
 
     public function __construct(
-        private ?Map<string, string> $_data = null,
+        private ?ImmutableMap<string, string> $_data = null,
         private ?FormErrors $_errors = null
     ) { }
 
     abstract public function validators(): FormValidator;
 
-    abstract public function toDomainObject(Map<string, string> $data): Option<T>;
+    abstract public function toDomainObject(ImmutableMap<string, string> $data): Option<T>;
 
     abstract public function fromDomainObject(\T $object): this;
 
-    public function validate(Map<string, string> $data): Validation<Form, T> {
+    public function validate(ImmutableMap<string, string> $data): Validation<Form, T> {
         return $this
             ->validators()
             ->validate($data)
             ->leftMap((FormErrors $errors) ==> {
                 return OptionFactory::fromValue($this->_data)->map(($original) ==> {
-                    return new static(Map::fromArray(array_merge(
+                    return new static(new ImmutableMap(array_merge(
                         $original->toArray(),
                         $$data->toArray()
                     )), $errors);
@@ -51,13 +52,13 @@ abstract class Form<T> {
         if ($this->_data === null) {
             return new None();
         } else {
-            return OptionFactory::fromValue($this->_data->get($key));
+            return $this->_data->get($key);
         }
     }
 
-    public function values(): Map<string, string> {
+    public function values(): ImmutableMap<string, string> {
         if ($this->_data === null) {
-            return new Map();
+            return new ImmutableMap();
         } else {
             return $this->_data;
         }

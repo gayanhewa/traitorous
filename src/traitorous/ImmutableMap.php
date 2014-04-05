@@ -24,7 +24,7 @@ final class ImmutableMap<Tk, Tv> implements Monoid,
     private ImmMap<Tk, Tv> $_n;
 
     public function __construct(?Traversable<Tv> $it = null) {
-        $this->_n = new ImmVector($it);
+        $this->_n = new ImmMap($it);
     }
 
     public function zero(): ImmutableMap<Tk, Tv> {
