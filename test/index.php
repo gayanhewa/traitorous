@@ -77,7 +77,10 @@ final class Index extends Controller {
     }
 
     public function handle(HttpRequest $request): HttpResponse {
-        return new OkResponse(new IndexView());
+        $response = new OkResponse(new IndexView());
+        $session  = $request->session("secret");
+        $visits   = $session->get("visits")->map(($n) ==> (int) $n)->getOrDefault(0);
+        return $response->withSession($session->set("visits", $visits + 1));
     }
 
 }
