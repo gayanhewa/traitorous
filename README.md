@@ -13,7 +13,7 @@ ditching the hip trends in PHP and setting off down our own path.
 Thoughts
 --------
 
-  * Declaritive code over imperative code.
+  * Declarative code over imperative code.
   * Modular code over unwieldly code.
   * Type safety to the max.
   * Composition over inheritance.
