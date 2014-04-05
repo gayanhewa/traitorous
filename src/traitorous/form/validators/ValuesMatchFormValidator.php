@@ -4,6 +4,7 @@ namespace traitorous\form\validators;
 use traitorous\form\errors\GeneralFormError;
 use traitorous\form\FormErrors;
 use traitorous\form\FormValidator;
+use traitorous\ImmutableMap;
 use traitorous\matcher\string\StringRegexMatcher;
 use traitorous\Option;
 use traitorous\option\OptionFactory;
@@ -19,7 +20,9 @@ final class ValuesMatchFormValidator implements FormValidator {
         private string $_errorMessage
     ) { }
 
-    public function validate(Map<string, string> $data): Validation<FormErrors, bool> {
+    public function validate(
+        ImmutableMap<string, string> $data
+    ): Validation<FormErrors, bool> {
         $tuple = $this->_getTuplePair($data);
 
         return $tuple->filter(((string, string) $t) ==> $t[0] == $t[1])->cata(
@@ -29,8 +32,8 @@ final class ValuesMatchFormValidator implements FormValidator {
     }
 
     private function _getTuplePair(Map<string, string> $data): Option<(string, string)> {
-        return OptionFactory::fromValue($data->get($this->_k1))->flatMap(($v1) ==> 
-            OptionFactory::fromValue($data->get($this->_k2))->map(($v2) ==> tuple($v1, $v2))
+        return $data->get($this->_k1)->flatMap(($v1) ==> 
+            $data->get($this->_k2))->map(($v2) ==> tuple($v1, $v2)
         );
     }
 

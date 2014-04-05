@@ -5,6 +5,7 @@ use traitorous\form\FormValidator;
 use traitorous\form\KeyedFormValidator;
 use traitorous\form\FormErrors;
 use traitorous\form\errors\KeyedFormError;
+use traitorous\ImmutableMap;
 use traitorous\http\HttpRequest;
 use traitorous\option\OptionFactory;
 use traitorous\Validation;
@@ -18,11 +19,13 @@ final class KeyedFormValidators implements FormValidator {
         private Vector<KeyedFormValidator> $_validators
     ) { }
 
-    public function validate(Map<string, string> $data): Validation<FormErrors, bool> {
+    public function validate(
+        ImmutableMap<string, string> $data
+    ): Validation<FormErrors, bool> {
         return array_reduce(
             $this->_validators->toArray(),
             (Validation<KeyedFormError, bool> $s, KeyedFormValidator $v) ==> {
-                $value = OptionFactory::fromValue($data->get($this->_key));
+                $value = $data->get($this->_key);
                 return $s->flatMap(($_) ==> $v->validate($this->_key, $value));
             },
             new Success(true)

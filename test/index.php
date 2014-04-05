@@ -162,9 +162,9 @@ final class LoginForm extends Form<LoginData> {
         });
     }
 
-    public function toDomainObject(Map<string, string> $data): Option<LoginData> {
-        return OptionFactory::fromValue($data->get("email"))->flatMap(($email) ==> {
-            return OptionFactory::fromValue($data->get("password"))->map(($password) ==> {
+    public function toDomainObject(ImmutableMap<string, string> $data): Option<LoginData> {
+        return $data->get("email")->flatMap(($email) ==> {
+            return $data->get("password")->map(($password) ==> {
                 return new LoginData($email, $password);
             });
         });

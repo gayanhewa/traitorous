@@ -6,6 +6,7 @@ use traitorous\form\FormError;
 use traitorous\form\FormErrors;
 use traitorous\form\errors\KeyedFormError;
 use traitorous\http\HttpRequest;
+use traitorous\ImmutableMap;
 use traitorous\validation\Success;
 use traitorous\validation\Failure;
 use traitorous\Validation;
@@ -14,7 +15,9 @@ final class ParallelFormValidators implements FormValidator {
 
     public function __construct(private Vector<FormValidator> $_manifest) { }
 
-    public function validate(Map<string, string> $data): Validation<FormErrors, bool> {
+    public function validate(
+        ImmutableMap<string, string> $data
+    ): Validation<FormErrors, bool> {
         return array_reduce(
             $this->_manifest->toArray(),
             (Validation $status, FormValidator $validator) ==> {
