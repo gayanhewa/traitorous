@@ -16,24 +16,28 @@ use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\Unwrappable;
 
-interface Option<T> extends SemiGroup,
-                            Monoid,
+interface Option<T> extends SemiGroup<Option<T>>,
+                            Monoid<Option<T>>,
                             Functor<T>,
                             Applicative<T>,
                             Alternative<T>,
                             Monad<T>,
                             MonadPlus<T>,
-                            Eq,
-                            Ord,
+                            Eq<Option<T>>,
+                            Ord<Option<T>>,
                             Show,
                             Container,
                             Unwrappable<T>,
-                            Filterable<T>,
+                            Filterable<T, Option<T>>,
                             KeyedEnum
 
 {
     const NONE = 0;
     const SOME = 1;
 
-    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): \Tb;
+    public function map<Tb>((function(T): Tb) $f): Option<Tb>;
+
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Option<Tb>;
+
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb;
 }

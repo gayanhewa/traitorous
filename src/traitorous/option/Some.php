@@ -3,29 +3,31 @@ namespace traitorous\option;
 
 use traitorous\algebraic\Alternative;
 use traitorous\algebraic\Applicative;
-use traitorous\algebraic\MonadOps;
+use traitorous\algebraic\Monad;
 use traitorous\algebraic\MonadPlus;
 use traitorous\Option;
 use traitorous\outlaw\Add;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
+use traitorous\outlaw\Show;
 
 final class Some<T> implements Option<T> {
 
-    public function __construct(private $_inner): void { }
+    public function __construct(private T $_inner): void { }
 
     public function getEnumKey(): int {
         return Option::SOME;
     }
 
-    public function add(Add $other): this {
+    public function add(Option<T> $other): this {
+        invariant($this->_inner instanceof Add, "Expected to contain an Add");
         return $other->cata(
             (  ) ==> $this,
             ($n) ==> new Some($this->_inner->add($n))
         );
     }
 
-    public function zero(): this {
+    public function zero(): Option<T> {
         return new None();
     }
 
@@ -34,6 +36,7 @@ final class Some<T> implements Option<T> {
     }
 
     public function ap<Tb, Tc>(Applicative<Tb> $other): Option<Tc> {
+        // UNSAFE
         return $other->map($this->_inner);
     }
 
@@ -45,20 +48,21 @@ final class Some<T> implements Option<T> {
         return $this;
     }
 
-    public function flatMap<Tb>((function(T): Option<Tb>) $f): Option<Tb> {
-        return $f($this->_inner);
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Option<Tb> {
+        $result = $f($this->_inner);
+        invariant($result instanceof Option, "Expected Option<T>");
+        return $result;
     }
 
-    public function mplus(MonadPlus $other): this {
+    public function mplus(MonadPlus<T> $other): this {
         return $this;
     }
 
     public function show(): string {
-        /**
-         * @var \traitorous\outlaw\Show $showable
-         */
-        $showable = $this->_inner;
-        return "Show({$showable->show()})";
+        invariant($this->_inner instanceof Show, "Expected either to contain a Show");
+        $inner = $this->_inner->show();
+        invariant(is_string($inner), "Expected a string");
+        return "Some({$inner})";
     }
 
     public function length(): int {
@@ -73,11 +77,11 @@ final class Some<T> implements Option<T> {
         return true;
     }
 
-    public function getOrElse((function(): T) $f): \T {
+    public function getOrElse((function(): T) $f): T {
         return $this->_inner;
     }
 
-    public function getOrDefault(\T $default): \T {
+    public function getOrDefault(T $default): T {
         return $this->_inner;
     }
 
@@ -89,21 +93,23 @@ final class Some<T> implements Option<T> {
         }
     }
 
-    public function equals(Eq $other): bool {
+    public function equals(Option<T> $other): bool {
+        invariant($this->_inner instanceof Eq, "Expected to contain an Eq");
         return $other->cata(
             (  ) ==> false,
             ($n) ==> $this->_inner->equals($n)
         );
     }
 
-    public function compare(Ord $other): int {
+    public function compare(Option<T> $other): int {
+        invariant($this->_inner instanceof Ord, "Expected to contain an Eq");
         return $other->cata(
             (  ) ==> Ord::GREATER,
             ($n) ==> $this->_inner->compare($n)
         );
     }
 
-    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): \Tb {
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb {
         return $some($this->_inner);
     }
 }

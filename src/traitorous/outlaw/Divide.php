@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Divide {
+interface Divide<Tself> {
 
-    public function divide(Divide $other): this;
+    public function divide(Tself $other): Tself;
 
 }

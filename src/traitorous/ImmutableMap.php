@@ -12,18 +12,18 @@ use traitorous\outlaw\ISet;
 use traitorous\Option;
 use traitorous\option\OptionFactory;
 
-final class ImmutableMap<Tk, Tv> implements Monoid,
-                                            Conjoinable,
-                                            Disjoinable,
+final class ImmutableMap<Tk, Tv> implements Monoid<ImmutableMap<Tk, Tv>>,
+                                            Conjoinable<ImmutableMap<Tk, Tv>>,
+                                            Disjoinable<ImmutableMap<Tk, Tv>>,
                                             Containable<Tk>,
                                             Container,
-                                            Intersectable,
+                                            Intersectable<ImmutableMap<Tk, Tv>>,
                                             ISet<Tk, Tv>
 {
 
     private ImmMap<Tk, Tv> $_n;
 
-    public function __construct(?Traversable<Tv> $it = null) {
+    public function __construct(?KeyedTraversable<Tk, Tv> $it = null) {
         $this->_n = new ImmMap($it);
     }
 
@@ -31,31 +31,27 @@ final class ImmutableMap<Tk, Tv> implements Monoid,
         return new ImmutableMap();
     }
 
-    public function add(Add $other): ImmutableMap<Tk, Tv> {
-        invariant($other instanceof ImmutableMap<Tk, Tv>, "Expected ImmutableMap<Tk, Tv>");
+    public function add(ImmutableMap<Tk, Tv> $other): ImmutableMap<Tk, Tv> {
         return new ImmutableMap(array_merge($this->toArray(), $other->toArray()));
     }
 
-    public function conj(Conjoinable $ys): ImmutableMap<Tk, Tv> {
-        invariant($other instanceof ImmutableMap<Tk, Tv>, "Expected ImmutableMap<Tk, Tv>");
+    public function conj(ImmutableMap<Tk, Tv> $ys): ImmutableMap<Tk, Tv> {
         return new ImmutableMap(array_merge($this->toArray(), $ys->toArray()));
     }
 
-    public function disj(Disjoinable $ys): ImmutableMap<Tk, Tv> {
-        invariant($other instanceof ImmutableMap<Tk, Tv>, "Expected ImmutableMap<Tk, Tv>");
+    public function disj(ImmutableMap<Tk, Tv> $ys): ImmutableMap<Tk, Tv> {
         return new ImmutableMap(array_diff_key($this->toArray(), $ys->toArray()));
     }
 
-    public function intersection(Intersectable $other): ImmutableMap<Tk, Tv> {
-        invariant($other instanceof ImmutableMap<Tk, Tv>, "Expected ImmutableMap<Tk, Tv>");
-        return new ImmutableMap(array_intersect_key($this->toArray(), $ys->toArray()));
+    public function intersection(ImmutableMap<Tk, Tv> $other): ImmutableMap<Tk, Tv> {
+        return new ImmutableMap(array_intersect_key($this->toArray(), $other->toArray()));
     }
 
-    public function contains(\Tk $a): bool {
+    public function contains(Tk $a): bool {
         return $this->_n->containsKey($a);
     }
 
-    public function get(\Tk $key): Option<Tv> {
+    public function get(Tk $key): Option<Tv> {
         return OptionFactory::fromValue($this->_n->get($key));
     }
 
@@ -71,15 +67,15 @@ final class ImmutableMap<Tk, Tv> implements Monoid,
         return !$this->isEmpty();
     }
 
-    public function keys(): Vector<Tk> {
+    public function keys(): ImmVector<Tk> {
         return $this->_n->keys();
     }
 
-    public function values(): Vector<Tv> {
+    public function values(): ImmVector<Tv> {
         return $this->_n->values();
     }
 
-    public function toArray(): array {
+    public function toArray(): array<Tk, Tv> {
         return $this->_n->toArray();
     }
 

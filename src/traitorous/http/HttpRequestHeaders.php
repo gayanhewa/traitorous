@@ -1,4 +1,4 @@
-<?hh // decl
+<?hh // strict
 namespace traitorous\http;
 
 use traitorous\ImmutableMap;
@@ -15,7 +15,9 @@ class HttpRequestHeaders {
     }
 
     private function _normalizeKey(string $key): string {
-        return "HTTP_" . str_replace("-", "_", strtoupper($key));
+        $str = str_replace("-", "_", strtoupper($key));
+        invariant(is_string($str), "Expected string");
+        return "HTTP_" . $str;
     }
 
 }

@@ -4,6 +4,7 @@ namespace traitorous\form;
 use traitorous\http\HttpRequest;
 use traitorous\form\FormErrors;
 use traitorous\form\FormValidator;
+use traitorous\form\errors\GeneralFormError;
 use traitorous\ImmutableMap;
 use traitorous\Validation;
 use traitorous\validation\Success;
@@ -24,17 +25,18 @@ abstract class Form<T> {
 
     abstract public function toDomainObject(ImmutableMap<string, string> $data): Option<T>;
 
-    abstract public function fromDomainObject(\T $object): this;
+    abstract public function fromDomainObject(T $object): this;
 
-    public function validate(ImmutableMap<string, string> $data): Validation<Form, T> {
+    public function validate(ImmutableMap<string, string> $data): Validation<Form<T>, T> {
+        // UNSAFE
         return $this
             ->validators()
             ->validate($data)
-            ->leftMap((FormErrors $errors) ==> {
+            ->leftMap(($errors) ==> {
                 return OptionFactory::fromValue($this->_data)->map(($original) ==> {
                     return new static(new ImmutableMap(array_merge(
                         $original->toArray(),
-                        $$data->toArray()
+                        $data->toArray()
                     )), $errors);
                 })->getOrElse(() ==> new static(null, $errors));
             })
@@ -43,7 +45,7 @@ abstract class Form<T> {
                     () ==> new Failure(new static(null, new FormErrors(new GeneralFormError(
                         "Failed converting form."
                     )))),
-                    (\T $t) ==> new Success($t)
+                    ($t) ==> new Success($t)
                 );
             });
     }

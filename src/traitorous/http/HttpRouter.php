@@ -1,4 +1,4 @@
-<?hh // decl
+<?hh // strict
 namespace traitorous\http;
 
 use traitorous\http\HttpRequest;
@@ -15,7 +15,7 @@ class HttpRouter {
     public function route(HttpRequest $request): Option<HttpRequestHandler> {
         return array_reduce(
             $this->_routes->toArray(),
-            (Option<HttpRequestHandler> $match, HttpRequestHandler $handler) ==> {
+            ($match, $handler) ==> {
                 return $match->orElse(function() use($handler, $request) {
                     if ($handler->route()->validate($request)) {
                         return new Some($handler);

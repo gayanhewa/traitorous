@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Conjoinable {
+interface Conjoinable<Tself> {
 
-	public function conj(Conjoinable $xs): Conjoinable;
+	public function conj(Tself $xs): Tself;
 
 }

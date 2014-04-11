@@ -28,7 +28,7 @@ final class StringMatchFormValidator implements KeyedFormValidator {
                     new KeyedFormError($key, $this->_errorMessage)
                 }));
             },
-            (string $value) ==> {
+            ($value) ==> {
                 if ($this->_matcher->match($value)) {
                     return new Success(true);
                 } else {

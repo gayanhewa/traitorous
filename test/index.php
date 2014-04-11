@@ -1,5 +1,6 @@
-<?hh // strict
+<?hh // partial
 require("../vendor/autoload.php");
+require(dirname(__FILE__) . "/../src/traitorous/deps/xhp/init.php");
 
 use \traitorous\form\Form;
 use \traitorous\form\FormValidator;
@@ -78,12 +79,13 @@ final class Index extends Controller {
     }
 
     public function handle(HttpRequest $request): HttpResponse {
-        $response = new OkResponse(new IndexView());
-        $session  = $request->session("secret");
-        $flash    = $request->flash("secret");
-        $visits   = $session->get("visits")->map(($n) ==> (int) $n)->getOrDefault(0);
+        $response  = new OkResponse(new IndexView());
+        $session   = $request->session("secret");
+        $flash     = $request->flash("secret");
+        $visits    = $session->get("visits")->map(($n) ==> (int) $n)->getOrDefault(0);
+        $newVisits = (string) ($visits + 1);
         return $response
-            ->withSession($session->set("visits", $visits + 1))
+            ->withSession($session->set("visits", $newVisits))
             ->withFlash($flash->set("ghost", "value"));
     }
 
@@ -124,9 +126,9 @@ final class Login extends Controller {
         $form   = new LoginForm();
         $result = $form->validate($request->getPostParamMap());
         return $result->cata(
-            (LoginForm $formWithErrors) ==>
+            ($formWithErrors) ==>
                 new OkResponse(new StringView(print_r($formWithErrors, true))),
-            (LoginData $n) ==>
+            ($n) ==>
                 new OkResponse(new StringView("Form validated!\n"))
         );
     }
@@ -141,7 +143,7 @@ final class LoginData {
     ) { }
 
     public function getEmail(): string {
-        return $this->_emai;
+        return $this->_email;
     }
 
     public function getPassword(): string {
@@ -177,8 +179,11 @@ final class LoginForm extends Form<LoginData> {
         });
     }
 
-    public function fromDomainObject(LoginData $object): this {
-        return new LoginForm($object->getEmail(), $object->getPassword());
+    public function fromDomainObject(LoginData $object): LoginForm {
+        return new LoginForm(new ImmutableMap([
+            "email"    => $object->getEmail(),
+            "password" => $object->getPassword()
+        ]));
     }
 
 }

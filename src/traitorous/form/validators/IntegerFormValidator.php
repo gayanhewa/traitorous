@@ -3,6 +3,7 @@ namespace traitorous\form\validators;
 
 use traitorous\form\errors\KeyedFormError;
 use traitorous\form\KeyedFormValidator;
+use traitorous\form\FormErrors;
 use traitorous\Option;
 use traitorous\Validation;
 use traitorous\validation\Failure;
@@ -10,9 +11,7 @@ use traitorous\validation\Success;
 
 final class IntegerFormValidator implements KeyedFormValidator {
 
-    public function __construct(private string $_errorMessage) {
-        $this->_errorMessage = $errorMessage;
-    }
+    public function __construct(private string $_errorMessage) { }
 
     public function validate(
         string $key,
@@ -25,7 +24,7 @@ final class IntegerFormValidator implements KeyedFormValidator {
                     new KeyedFormError($key, $this->_errorMessage)
                 }));
             },
-            (string $value) ==> {
+            ($value) ==> {
                 if (is_int($value)) {
                     return new Success(true);
                 } else {

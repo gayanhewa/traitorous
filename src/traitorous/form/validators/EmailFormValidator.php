@@ -11,7 +11,7 @@ final class EmailFormValidator implements KeyedFormValidator {
 
     private StringMatchFormValidator $_email;
 
-    public function __construct($errorMessage) {
+    public function __construct(string $errorMessage) {
         $this->_email = new StringMatchFormValidator(
             new StringRegexMatcher("/\\S+@\\S+\\.\\S+/"),
             $errorMessage

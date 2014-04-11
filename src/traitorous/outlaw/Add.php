@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Add {
+interface Add<Tself> {
 
-    public function add(Add $other): Add;
+    public function add(Tself $other): Tself;
 
 }

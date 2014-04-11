@@ -17,35 +17,42 @@ final class None<T> implements Option<T> {
         return Option::NONE;
     }
 
-    public function add(Add $other): Option<A> {
+    public function add(Option<T> $other): Option<T> {
         return $other;
     }
 
-    public function zero(): Option<A> {
+    public function zero(): Option<T> {
         return $this;
     }
 
     public function map<Tb>((function(T): Tb) $f): Option<Tb> {
+        // UNSAFE
         return $this;
     }
 
     public function ap<Tb, Tc>(Applicative<Tb> $other): Option<Tc> {
+        // UNSAFE
         return $this;
     }
 
     public function orThis(Alternative<T> $other): Option<T> {
+        invariant($other instanceof Option, "Expected Option<T>");
         return $other;
     }
 
     public function orElse((function(): Alternative<T>) $other): Option<T> {
-        return $other();
+        $result = $other();
+        invariant($result instanceof Option, "Expected Option<T>");
+        return $result;
     }
 
-    public function flatMap<Tb>((function(T): Option<Tb>) $f): Option<Tb> {
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Option<Tb> {
+        // UNSAFE
         return $this;
     }
 
     public function mplus(MonadPlus<T> $other): Option<T> {
+        invariant($other instanceof Option, "Expected an Option<T>");
         return $other;
     }
 
@@ -65,11 +72,11 @@ final class None<T> implements Option<T> {
         return false;
     }
 
-    public function getOrElse((function(): T) $f): \T {
+    public function getOrElse((function(): T) $f): T {
         return $f();
     }
 
-    public function getOrDefault(\T $default): \T {
+    public function getOrDefault(T $default): T {
         return $default;
     }
 
@@ -77,21 +84,21 @@ final class None<T> implements Option<T> {
         return $this;
     }
 
-    public function equals(Eq $other): bool {
+    public function equals(Option<T> $other): bool {
         return $other->cata(
             (  ) ==> true,
             ($n) ==> false
         );
     }
 
-    public function compare(Ord $other): int {
+    public function compare(Option<T> $other): int {
         return $other->cata(
             (  ) ==> Ord::EQUAL,
             ($_) ==> Ord::LESS
         );
     }
 
-    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): \Tb {
+    public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb {
         return $none();
     }
 }

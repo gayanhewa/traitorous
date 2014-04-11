@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Subtract {
+interface Subtract<Tself> {
 
-    public function subtract(Subtract $other): this;
+    public function subtract(Tself $other): Tself;
 
 }

@@ -2,30 +2,34 @@
 namespace traitorous\finishable;
 
 use traitorous\algebraic\Applicative;
-use traitorous\algebraic\MonadOps;
+use traitorous\algebraic\Monad;
 use traitorous\Finishable;
 use traitorous\outlaw\Add;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
+use traitorous\outlaw\Show;
+use traitorous\outlaw\Zero;
 
 final class More<T> implements Finishable<T> {
 
-    public function __construct(private \T $_x): void { }
+    public function __construct(private T $_x): void { }
 
-    public function add(Add $other): this {
+    public function add(Finishable<T> $other): Finishable<T> {
+        invariant($this->_x instanceof Add, "Expected More to contain an Add");
         return $other->cata(
-            function(Add $y) { return new Done($this->_x->add($y)); },
-            function(Add $y) { return new More($this->_x->add($y)); }
+            ($y) ==> new Done($this->_x->add($y)),
+            ($y) ==> new More($this->_x->add($y))
         );
     }
 
     public function ap<Tb, Tc>(Applicative<Tb> $next): Applicative<Tc> {
+        // UNSAFE
         return $next->cata(
-            (Add $y) ==> {
+            ($y) ==> {
                 $f = $this->_x; /* @var callable $f */
                 return new Done($f($y));
             },
-            (Add $y) ==> {
+            ($y) ==> {
                 $f = $this->_x; /* @var callable $f */
                 return new More($f($y));
             }
@@ -36,18 +40,22 @@ final class More<T> implements Finishable<T> {
         return new More($f($this->_x));
     }
 
-    public function flatMap<Tb>((function(T): Finishable<Tb>) $f): Finishable<Tb> {
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Finishable<Tb> {
         $result = $f($this->_x);
+        invariant($result instanceof Finishable, "Expected to return a Finishable<Tb>");
+        return $result;
     }
 
     public function zero(): this {
+        invariant($this->_x instanceof Zero, "Expected More to contain an Zero");
         return new More($this->_x->zero());
     }
 
-    public function equals(Eq $other): bool {
+    public function equals(Finishable<T> $other): bool {
+        invariant($this->_x instanceof Eq, "Expected More to contain an Eq");
         return $other->cata(
-            ()       ==> false,
-            (Add $y) ==> $this->_x->equals($y)
+            ($y) ==> false,
+            ($y) ==> $this->_x->equals($y)
         );
     }
 
@@ -55,22 +63,26 @@ final class More<T> implements Finishable<T> {
         return Finishable::MORE;
     }
 
-    public function compare(Ord $other): int {
+    public function compare(Finishable<T> $other): int {
+        invariant($this->_x instanceof Ord, "Expected More to contain an Ord");
         return $other->cata(
-            ()       ==> Ord::LESS,
-            (Add $y) ==> $this->_x->compare($y)
+            ($y) ==> Ord::LESS,
+            ($y) ==> $this->_x->compare($y)
         );
     }
 
     public function show(): string {
-        return "More({$this->_x->show()})";
+        invariant($this->_x instanceof Show, "Expected More to contain a Show");
+        $inner = $this->_x->show();
+        invariant(is_string($inner), "Expected a string");
+        return "More({$inner})";
     }
 
     public function unbox(): T {
         return $this->_x;
     }
 
-    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): \Tb {
+    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb {
         return $more($this->_x);
     }
 

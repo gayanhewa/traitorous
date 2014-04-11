@@ -8,7 +8,7 @@ use traitorous\Option;
 use traitorous\option\Some;
 use traitorous\option\None;
 
-abstract class Session {
+abstract class Session<Tself> {
 
     public function __construct(
         private string $_secret,
@@ -23,15 +23,17 @@ abstract class Session {
         return $this->_data;
     }
 
-    public function withFreshData(ImmutableMap<string, string> $data): Session {
+    public function withFreshData(ImmutableMap<string, string> $data): Tself {
+        // UNSAFE
         return new static($this->_secret, $data);
     }
 
-    public function withData(ImmutableMap<string, string> $data): Session {
+    public function withData(ImmutableMap<string, string> $data): Tself {
+        // UNSAFE
         return new static($this->_secret, $this->_data->add($data));
     }
 
-    public function set($key, $value): Session {
+    public function set(string $key, string $value): Tself {
         $arr = [];
         $arr[$key] = $value;
         return $this->withData(new ImmutableMap($arr));
@@ -41,8 +43,9 @@ abstract class Session {
         return $this->_data->get($key);
     }
 
-    public function clear(): Session {
-        return new static($this->_secret, $data);
+    public function clear(): Tself {
+        // UNSAFE
+        return new static($this->_secret, new ImmutableMap([]));
     }
 
     public function toJson(): string {
@@ -53,9 +56,9 @@ abstract class Session {
         return Session::sessionSignature($this->_secret, $this->_data);
     }
 
-    abstract public function cata<T>((function(): T) $s, (function(): T) $f): \T;
+    abstract public function cata<T>((function(): T) $s, (function(): T) $f): T;
 
-    public static function fromRequest(string $key,
+    protected static function _fromRequest(string $key,
                                         string $secret,
                                         HttpRequest $request): ImmutableMap<string, string>
     {

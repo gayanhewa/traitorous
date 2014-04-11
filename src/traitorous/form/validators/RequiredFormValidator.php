@@ -19,14 +19,10 @@ final class RequiredFormValidator implements KeyedFormValidator {
     ): Validation<FormErrors, bool>
     {
         return $optionalValue->cata(
-            () ==> {
-                return new Failure(new FormErrors(Vector {
-                    new KeyedFormError($key, $this->_errorMessage)
-                }));
-            },
-            (string $value) ==> {
-                return new Success(true);
-            }
+            () ==> new Failure(new FormErrors(Vector {
+                new KeyedFormError($key, $this->_errorMessage)
+            })),
+            ($value) ==> new Success(true)
         );
     }
 

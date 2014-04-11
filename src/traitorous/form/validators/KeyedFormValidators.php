@@ -24,7 +24,7 @@ final class KeyedFormValidators implements FormValidator {
     ): Validation<FormErrors, bool> {
         return array_reduce(
             $this->_validators->toArray(),
-            (Validation<KeyedFormError, bool> $s, KeyedFormValidator $v) ==> {
+            ($s, $v) ==> {
                 $value = $data->get($this->_key);
                 return $s->flatMap(($_) ==> $v->validate($this->_key, $value));
             },

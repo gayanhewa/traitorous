@@ -1,4 +1,4 @@
-<?hh // decl
+<?hh // partial
 namespace traitorous\http;
 
 use \Exception;
@@ -18,7 +18,9 @@ class HttpRequest {
 
     private ImmutableMap<string, string> $_get;
 
-    private ImmutableMap<string, sting> $_post;
+    private ImmutableMap<string, string> $_post;
+
+    private HttpRequestHeaders $_headers;
 
     public function __construct() {
         if (self::$_initialized) {
@@ -43,7 +45,7 @@ class HttpRequest {
     }
 
 
-    public function getHeader(string $header) {
+    public function getHeader(string $header): Option<string> {
         return $this->_headers->get($header);
     }
 

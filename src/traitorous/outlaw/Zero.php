@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Zero {
+interface Zero<Tself> {
 
-    public function zero(): this;
+    public function zero(): Tself;
 
 }

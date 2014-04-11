@@ -1,4 +1,4 @@
-<?hh // decl
+<?hh // strict
 namespace traitorous\http\handlers;
 
 use traitorous\Combinatorial;
@@ -6,21 +6,24 @@ use traitorous\Revolver;
 use traitorous\http\HttpRequestHandler;
 use traitorous\http\HttpRequest;
 use traitorous\http\HttpResponse;
+use traitorous\http\routes\HttpRouteRule;
 use traitorous\algebraic\SemiGroup;
 use traitorous\outlaw\Add;
 
-abstract class Controller implements HttpRequestHandler, SemiGroup {
+abstract class Controller implements HttpRequestHandler,
+                                     SemiGroup<HttpRequestHandler>
+{
 
     public function middleware(): Vector<HttpRouteMiddleware> {
-        return new Vector();
+        return new Vector([]);
     }
 
     public function apply(HttpRequest $request): HttpResponse {
         return $this->_foldMiddlewareIntoController()->handle($request);
     }
 
-    public function add(Add $other): HttpRequestHandler {
-        throw new \DomainException("The controller must be the target of middleware, not middleware itself");
+    public function add(HttpRequestHandler $other): HttpRequestHandler {
+        throw new \Exception("The controller must be the target of middleware, not middleware itself");
     }
 
     private function _foldMiddlewareIntoController(): HttpRequestHandler {

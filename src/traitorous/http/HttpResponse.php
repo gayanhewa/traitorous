@@ -23,7 +23,7 @@ abstract class HttpResponse {
     ) { }
 
     public function withHeader(HttpResponseHeader $header): HttpResponse {
-        return $this->withHeaders(new ImmutableVector($header));
+        return $this->withHeaders(new ImmutableVector([$header]));
     }
 
     public function withHeaders(ImmutableVector<HttpResponseHeader> $headers): HttpResponse {
@@ -57,11 +57,11 @@ abstract class HttpResponse {
         return ($this->_headers !== null) ? $this->_headers : new ImmutableVector();
     }
 
-    public function session(): Option<Session> {
+    public function session(): Option<SignedSession> {
         return ($this->_session !== null) ? new Some($this->_session) : new None();
     }
 
-   public function flash(): Option<Session> {
+   public function flash(): Option<FlashSession> {
         return ($this->_flash !== null) ? new Some($this->_flash) : new None();
     }
 

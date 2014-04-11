@@ -14,8 +14,8 @@ use traitorous\outlaw\Unwrappable;
 interface Either<Tl, Tr> extends Functor<Tr>,
                                  Applicative<Tr>,
                                  Monad<Tr>,
-                                 Eq,
-                                 Ord,
+                                 Eq<Either<Tl, Tr>>,
+                                 Ord<Either<Tl, Tr>>,
                                  Show,
                                  LeftMappable<Tl>,
                                  Unwrappable<Tr>,
@@ -24,5 +24,5 @@ interface Either<Tl, Tr> extends Functor<Tr>,
     const LEFT  = 0;
     const RIGHT = 1;
 
-    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): \Tb;
+    public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): Tb;
 }

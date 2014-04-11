@@ -12,8 +12,8 @@ use traitorous\validation\Success;
 final class MinNumberFormValidator implements KeyedFormValidator {
 
     public function __construct(
-        private int $number,
-        private string $errorMessage
+        private int $_number,
+        private string $_errorMessage
     ) { }
 
     public function validate(
@@ -27,9 +27,9 @@ final class MinNumberFormValidator implements KeyedFormValidator {
                     new KeyedFormError($key, $this->_errorMessage)
                 }));
             },
-            (string $value) ==> {
-                if ((int)$value >= $this->_number) {
-                    return new Success($value);
+            ($value) ==> {
+                if (intval($value) >= $this->_number) {
+                    return new Success(true);
                 } else {
                     return new Failure(new FormErrors(Vector {
                         new KeyedFormError($key, $this->_errorMessage)
