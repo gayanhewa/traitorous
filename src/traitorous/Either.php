@@ -24,5 +24,11 @@ interface Either<Tl, Tr> extends Functor<Tr>,
     const LEFT  = 0;
     const RIGHT = 1;
 
+    public function map<Tb>((function(Tr): Tb) $f): Either<Tl, Tb>;
+
+    public function ap<Tb, Tc>(Applicative<Tb> $other): Either<Tl, Tc>;
+
+    public function flatMap<Tb>((function(Tr): Monad<Tb>) $f): Either<Tl, Tb>;
+
     public function cata<Tb>((function(Tl): Tb) $left, (function(Tr): Tb) $right): Tb;
 }

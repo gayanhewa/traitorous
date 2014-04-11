@@ -37,7 +37,15 @@ interface Option<T> extends SemiGroup<Option<T>>,
 
     public function map<Tb>((function(T): Tb) $f): Option<Tb>;
 
+    public function ap<Tb, Tc>(Applicative<Tb> $other): Option<Tc>;
+
+    public function orThis(Alternative<T> $other): Option<T>;
+
+    public function orElse((function(): Alternative<T>) $f): Option<T>;
+
     public function flatMap<Tb>((function(T): Monad<Tb>) $f): Option<Tb>;
+
+    public function mplus(MonadPlus<T> $other): Option<T>;
 
     public function cata<Tb>((function(): Tb) $none, (function(T): Tb) $some): Tb;
 }

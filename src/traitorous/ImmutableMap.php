@@ -68,11 +68,11 @@ final class ImmutableMap<Tk, Tv> implements Monoid<ImmutableMap<Tk, Tv>>,
     }
 
     public function keys(): ImmVector<Tk> {
-        return $this->_n->keys()->immutable();
+        return $this->_n->keys();
     }
 
     public function values(): ImmVector<Tv> {
-        return $this->_n->values()->immutable();
+        return $this->_n->values();
     }
 
     public function toArray(): array<Tk, Tv> {
