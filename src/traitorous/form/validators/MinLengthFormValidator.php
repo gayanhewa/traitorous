@@ -27,9 +27,9 @@ final class MinLengthFormValidator implements KeyedFormValidator {
                     new KeyedFormError($key, $this->_errorMessage)
                 }));
             },
-            (string $value) ==> {
+            ($value) ==> {
                 if (strlen(($value)) >= $this->_length) {
-                    return new Success($value);
+                    return new Success(true);
                 } else {
                     return new Failure(new FormErrors(Vector {
                         new KeyedFormError($key, $this->_errorMessage)

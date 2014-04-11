@@ -11,7 +11,7 @@ final class HttpRouteRules implements HttpRouteRule {
     public function validate(HttpRequest $request): bool {
         return array_reduce(
             $this->_rules->toArray(),
-            (bool $status, HttpRouteRule $rule) ==> {
+            ($status, $rule) ==> {
                 return $status && $rule->validate($request);
             },
             true

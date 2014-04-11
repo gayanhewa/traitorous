@@ -18,7 +18,7 @@ final class SequenceFormValidators implements FormValidator {
     ): Validation<FormErrors, bool> {
         return array_reduce(
             $this->_manifest->toArray(),
-            (Validation<FormErrors, bool> $status, FormValidator $validator) ==> {
+            ($status, $validator) ==> {
                 return $status->flatMap(($_) ==> $validator->validate($data));
             },
             new Success(true)

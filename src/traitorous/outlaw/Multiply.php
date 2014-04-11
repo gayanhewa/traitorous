@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Multiply {
+interface Multiply<Tself> {
 
-    public function multiply(Multiply $other): this;
+    public function multiply(Tself $other): Tself;
 
 }

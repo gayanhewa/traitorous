@@ -3,6 +3,6 @@ namespace traitorous\outlaw;
 
 interface Containable<T> {
 
-    public function contains(\T $a): bool;
+    public function contains(T $a): bool;
 
 }

@@ -1,10 +1,10 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Seq<T> {
+interface Seq<T, Tself> {
 
-    public function head(): \T;
+    public function head(): T;
 
-    public function tail(): Seq<T>;
+    public function tail(): Tself;
 
 }

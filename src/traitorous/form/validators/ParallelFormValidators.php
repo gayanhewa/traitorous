@@ -20,15 +20,15 @@ final class ParallelFormValidators implements FormValidator {
     ): Validation<FormErrors, bool> {
         return array_reduce(
             $this->_manifest->toArray(),
-            (Validation $status, FormValidator $validator) ==> {
+            ($status, $validator) ==> {
                 return $validator->validate($data)->cata(
-                    (FormErrors $error) ==> $status->cata(
-                        (FormErrors $errors) ==> new Failure($errors->add($error)),
-                        ($_)                 ==> new Failure($error)
+                    ($error) ==> $status->cata(
+                        ($errors) ==> new Failure($errors->add($error)),
+                        ($_)      ==> new Failure($error)
                     ),
                     ($_) ==> $status->cata(
-                        (FormErrors $errors) ==> new Failure($errors),
-                        ($s)                 ==> new Success($s)
+                        ($errors) ==> new Failure($errors),
+                        ($s)      ==> new Success($s)
                     )
                 );
             },

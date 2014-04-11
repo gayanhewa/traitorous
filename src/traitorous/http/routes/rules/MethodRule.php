@@ -10,9 +10,10 @@ final class MethodRule implements HttpRouteRule {
     public function __construct(private HttpMethod $_method): void { }
 
     public function validate(HttpRequest $request): bool {
-        return $request->getMethod()->filter((string $method) ==> {
-            return $method === $this->_method->__toString();
-        })->nonEmpty();
+        return $request
+            ->getMethod()
+            ->filter(($method) ==> $method === $this->_method->__toString())
+            ->nonEmpty();
     }
 
 }

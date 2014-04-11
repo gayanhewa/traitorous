@@ -14,9 +14,9 @@ use traitorous\outlaw\LeftMappable;
 interface Validation<Te, Ts> extends Functor<Ts>,
                                      Applicative<Ts>,
                                      Monad<Ts>,
-                                     SemiGroup,
-                                     Eq,
-                                     Ord,
+                                     SemiGroup<Validation<Te, Ts>>,
+                                     Eq<Validation<Te, Ts>>,
+                                     Ord<Validation<Te, Ts>>,
                                      Show,
                                      LeftMappable<Te>,
                                      KeyedEnum
@@ -26,6 +26,6 @@ interface Validation<Te, Ts> extends Functor<Ts>,
     const SUCCESS = 1;
 
     public function cata<Tb>((function(Te): Tb) $failure,
-                             (function(Ts): Tb) $success): \Tb;
+                             (function(Ts): Tb) $success): Tb;
 
 }

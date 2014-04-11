@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Disjoinable {
+interface Disjoinable<Tself> {
 
-    public function disj(Disjoinable $xs): this;
+    public function disj(Tself $xs): Tself;
 
 }

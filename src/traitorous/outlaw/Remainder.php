@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Remainder {
+interface Remainder<Tself> {
 
-    public function remainder(Remainder $rhs): this;
+    public function remainder(Tself $rhs): Tself;
 
 }

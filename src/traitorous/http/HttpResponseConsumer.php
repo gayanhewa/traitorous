@@ -1,4 +1,4 @@
-<?hh // decl
+<?hh // strict
 namespace traitorous\http;
 
 use traitorous\http\HttpResponse;
@@ -47,16 +47,25 @@ final class HttpResponseConsumer {
     private function _generateSessionCookie(HttpResponse $response): Option<string> {
         return $response->session()->cata(
             ()         ==> new None(),
-            ($session) ==> new Some("session={$session->signature()}{$session->toJson()}; Path=/; HttpOnly")
+            ($session) ==> {
+                $signature = $session->signature();
+                $json      = $session->toJson();
+                return new Some("session={$signature}{$json}; Path=/; HttpOnly");
+            }
         );
     }
 
     private function _generateFlashCookie(HttpResponse $response): string {
         return $response->flash()->cata(
             ()       ==> "flash=none; Path=/; HttpOnly",
-            ($flash) ==> "flash={$flash->signature()}{$flash->toJson()}; Path=/; HttpOnly"
+            ($flash) ==> {
+                $signature = $flash->signature();
+                $json      = $flash->toJson();
+                return "flash={$signature}{$json}; Path=/; HttpOnly";
+            }
         );
     }
+
 
     private function _renderView(HttpResponse $response): string {
         return $response->view()->render();

@@ -3,8 +3,8 @@ namespace traitorous\outlaw;
 
 use traitorous\Option;
 
-interface Intersectable {
+interface Intersectable<Tself> {
 
-    public function intersection(Intersectable $other): Intersectable;
+    public function intersection(Tself $other): Tself;
 
 }

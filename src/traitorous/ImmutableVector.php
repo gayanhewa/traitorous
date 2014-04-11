@@ -10,6 +10,7 @@ use traitorous\algebraic\Monoid;
 use traitorous\algebraic\Foldable;
 use traitorous\outlaw\Add;
 use traitorous\outlaw\Conjoinable;
+use traitorous\outlaw\Disjoinable;
 use traitorous\outlaw\Containable;
 use traitorous\outlaw\Container;
 use traitorous\outlaw\Droppable;
@@ -23,19 +24,20 @@ final class ImmutableVector<T> implements Functor<T>,
                                           Applicative<T>,
                                           Alternative<T>,
                                           Monad<T>,
-                                          Monoid,
+                                          Monoid<ImmutableVector<T>>,
                                           Foldable<T>,
-                                          Conjoinable,
-                                          Containable,
+                                          Conjoinable<ImmutableVector<T>>,
+                                          Disjoinable<ImmutableVector<T>>,
+                                          Containable<T>,
                                           Container,
-                                          Droppable<T>,
-                                          Takeable<T>,
-                                          Filterable<T>
+                                          Droppable<T, ImmutableVector<T>>,
+                                          Takeable<T, ImmutableVector<T>>,
+                                          Filterable<T, ImmutableVector<T>>
 {
 
     private ImmVector<T> $_n;
 
-    public function __construct(?Traversable<Tv> $it = null) {
+    public function __construct(?Traversable<T> $it = null) {
         $this->_n = new ImmVector($it);
     }
 
@@ -44,56 +46,64 @@ final class ImmutableVector<T> implements Functor<T>,
     }
 
     public function ap<Tb, Tc>(Applicative<Tb> $other): ImmutableVector<Tc> {
-        invariant($other instanceof ImmutableVector<T>, "Expecting ImmutableVector<T>");
-        return $other->map($this->_inner);
+        // UNSAFE
+        return $this->flatMap(($f) ==> $this->map($f));
     }
 
     public function orThis(Alternative<T> $other): ImmutableVector<T> {
-        invariant($other instanceof ImmutableVector<T>, "Expecting ImmutableVector<T>");
+        invariant($other instanceof ImmutableVector, "Expecting ImmutableVector<T>");
         return $this->conj($other);
     }
 
-    public function orElse((function(): ImmutableVector<T>) $f): ImmutableVector<T> {
-        return $this->conj($other());
+    public function orElse((function(): Alternative<T>) $f): ImmutableVector<T> {
+        $n = $f();
+        invariant($n instanceof ImmutableVector, "Expected an ImmutableVector<T>");
+        return $this->conj($n);
     }
 
-    public function flatMap<Tb>((function(T): ImmutableVector<Tb>) $f): ImmutableVector<Tb> {
-        return $f($this->_n);
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): ImmutableVector<Tb> {
+        $vector = $this->foldl(new Vector([]), ($m, $n) ==> {
+            $v = $f($n);
+            invariant($v instanceof ImmutableVector, "Expected an ImmutableVector<Tb>");
+            return $m->addAll($v->toArray());
+        });
+        return new ImmutableVector($vector);
     }
 
     public function zero(): ImmutableVector<T> {
         return new ImmutableVector([]);
     }
 
-    public function add(Add<T> $other): ImmutableVector<T> {
-        invariant($other instanceof ImmutableVector<T>, "Expecting ImmutableVector<T>");
+    public function add(ImmutableVector<T> $other): ImmutableVector<T> {
         return $this->conj($other);
     }
 
-    public function foldMap<Tm as Monoid>(\Tm $zero, (function(T): Tm) $f): \Tm {
-        return $this->foldl($zero, (\Tm $m, \T $n) ==> $m->add($f($n)));
+    public function foldMap<Tm as Monoid>(Tm $zero, (function(T): Tm) $f): Tm {
+        // UNSAFE
+        return $this->foldl($zero, ($m, $n) ==> $m->add($f($n)));
     }
 
-    public function foldr<Tb>(\Tb $init, (function(T, Tb): \Tb) $f): \Tb {
-        $flip = Combinatorial::flip();
-        return array_reduce(array_reverse($this->_n->toArray()), $flip($f), $init);
+    public function foldr<Tb>(Tb $init, (function(T, Tb): Tb) $f): Tb {
+        return array_reduce(
+            array_reverse($this->_n->toArray()),
+            Combinatorial::flip1($f),
+            $init
+        );
     }
 
-    public function foldl<Tb>(\Tb $init, (function(Tb, T): \Tb) $f): \Tb {
+    public function foldl<Tb>(Tb $init, (function(Tb, T): Tb) $f): Tb {
         return array_reduce($this->_n->toArray(), $f, $init);
     }
 
-    public function conj(Conjoinable $ys): ImmutableVector<T> {
-        invariant($other instanceof ImmutableVector<T>, "Expecting ImmutableVector<T>");
+    public function conj(ImmutableVector<T> $ys): ImmutableVector<T> {
         return new ImmutableVector(array_merge($this->_n->toArray(), $ys->toArray()));
     }
 
-    public function disj(Disjoinable $ys): ImmutableVector<T> {
-        invariant($other instanceof ImmutableVector<T>, "Expecting ImmutableVector<T>");
-        return new ImmutableVector($this->_n->filter((\T $x) ==> $ys->contains($x)));
+    public function disj(ImmutableVector<T> $ys): ImmutableVector<T> {
+        return new ImmutableVector($this->_n->filter(($x) ==> $ys->contains($x)));
     }
 
-    public function contains(\T $a): bool {
+    public function contains(T $a): bool {
         return $this->_n->linearSearch($a) !== -1;
     }
 
@@ -130,13 +140,13 @@ final class ImmutableVector<T> implements Functor<T>,
     }
 
     public function takeWhile((function(T): bool) $p): ImmutableVector<T> {
-        return $this->findOffset($p)->cata(
+        return $this->findOffsetOf($p)->cata(
             ()   ==> new ImmutableVector(),
             ($p) ==> $this->take($p)
         );
     }
 
-    public function toArray(): array {
+    public function toArray(): array<int, T> {
         return $this->_n->toArray();
     }
 
@@ -148,14 +158,14 @@ final class ImmutableVector<T> implements Functor<T>,
         }
     }
 
-    public function findOffset(\T $n): Option<int> {
-        $p = $this->_n->linearSearch($a);
+    public function findOffset(T $n): Option<int> {
+        $p = $this->_n->linearSearch($n);
         return ($p !== -1) ? new Some($p) : new None();
     }
 
     public function findOffsetOf((function(T): bool) $p): Option<int> {
-        foreach($this->_n as $n) {
-            if ($p($n)) { return new Some($n); }
+        for ($i = 0; $i < $this->_n->count(); $i++) {
+            if ($p($this->_n->at($i))) { return new Some($i); }
         }
         return new None();
     }

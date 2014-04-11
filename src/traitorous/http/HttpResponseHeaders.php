@@ -1,4 +1,4 @@
-<?hh // decl
+<?hh // strict
 namespace traitorous\http;
 
 use traitorous\http\headers\HttpResponseHeader;
@@ -28,8 +28,11 @@ final class HttpResponseHeaders {
         header("{$key}: {$value}", $replace);
     }
 
+    /*
+      TODO: check if missing in hhi files
     public function remove(HttpResponseHeader $header): void {
         remove_header($header->getKey());
     }
+    */
 
 }

@@ -3,6 +3,6 @@ namespace traitorous\outlaw;
 
 interface Keyable {
 
-    public function key();
+    public function key(): string;
 
 }

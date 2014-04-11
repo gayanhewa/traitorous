@@ -6,20 +6,26 @@ use traitorous\form\KeyedFormValidator;
 use traitorous\form\errors\KeyedFormError;
 use traitorous\Option;
 use traitorous\Validation;
+use traitorous\validation\Failure;
+use traitorous\validation\Success;
 
 final class NonEmptyFormValidator implements KeyedFormValidator {
 
     public function __construct(
         private int $_min,
-        private string $errorMessage
+        private string $_errorMessage
     ) { }
 
     public function validate(
         string $key,
         Option<string> $optionalValue
-    ): Validation<FormErrors, bool>
-    {
-        return $this->_min->validate($key, $optionalValue);
+    ): Validation<FormErrors, bool> {
+        return $optionalValue->cata(
+            () ==> new Failure(new FormErrors(Vector {
+                new KeyedFormError($key, $this->_errorMessage)
+            })),
+            ($x) ==> new Success(true)
+        );
     }
 
 }

@@ -3,5 +3,5 @@ namespace traitorous\algebraic;
 
 use traitorous\outlaw\Add;
 
-interface SemiGroup extends Add {
+interface SemiGroup<Tself> extends Add<Tself> {
 }

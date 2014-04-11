@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface One {
+interface One<Tself> {
 
-	public function one(): this;
+	public function one(): Tself;
 
 }

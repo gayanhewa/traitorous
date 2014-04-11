@@ -1,8 +1,8 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Eq {
+interface Eq<Tself> {
 
-    public function equals(Eq $other): bool;
+    public function equals(Tself $other): bool;
 
 }

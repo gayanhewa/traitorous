@@ -10,8 +10,9 @@ final class PathRule implements HttpRouteRule {
     public function __construct(private StringMatcher $_matcher): void { }
 
     public function validate(HttpRequest $request): bool {
-        return $request->getPath()->filter((string $path) ==> {
-            return $this->_matcher->match($path);
-        })->nonEmpty();
+        return $request
+            ->getPath()
+            ->filter(($path) ==> $this->_matcher->match($path))
+            ->nonEmpty();
     }
 }

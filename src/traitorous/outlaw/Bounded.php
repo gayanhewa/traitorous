@@ -1,10 +1,10 @@
 <?hh // strict
 namespace traitorous\outlaw;
 
-interface Bounded {
+interface Bounded<Tself> {
 
-    public function minValue(): this;
+    public function minValue(): Tself;
 
-    public function maxValue(): this;
+    public function maxValue(): Tself;
 
 }
