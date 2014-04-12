@@ -34,6 +34,7 @@ use \traitorous\Option;
 use \traitorous\option\Some;
 use \traitorous\option\None;
 use \traitorous\option\OptionFactory;
+use \traitorous\Traitorous;
 
 use \traitorous\ImmutableVector;
 use \traitorous\ImmutableMap;
@@ -226,17 +227,13 @@ final class PostMiddleware extends HttpRouteMiddleware {
 $test1 = new ImmutableVector();
 $test2 = new ImmutableMap();
 
-$request  = new HttpRequest();
-$consumer = new HttpResponseConsumer();
-
-$router = new HttpRouter(Vector {
+$default = new Missing();
+$router  = new HttpRouter(Vector {
     new Index(),
     new Regex(),
     new Login()
 });
 
-$route = $router
-    ->route($request)
-    ->getOrElse(() ==> new Missing());
+$app = new Traitorous($router, $default);
 
-echo $consumer->consume($route->apply($request));
+$app->run();
