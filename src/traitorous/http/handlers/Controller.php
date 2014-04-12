@@ -19,18 +19,24 @@ abstract class Controller implements HttpRequestHandler,
     }
 
     public function apply(HttpRequest $request): HttpResponse {
-        return $this->_foldMiddlewareIntoController()->handle($request);
+        $handler = Controller::foldMiddleware($this, $this->middleware());
+        return $handler->handle($request);
     }
 
     public function add(HttpRequestHandler $other): HttpRequestHandler {
-        throw new \Exception("The controller must be the target of middleware, not middleware itself");
+        throw new \Exception(
+            "The controller must be the target of middleware, not middleware itself"
+        );
     }
 
-    private function _foldMiddlewareIntoController(): HttpRequestHandler {
+    public static function foldMiddleware(
+        HttpRequestHandler $init,
+        Vector<HttpRouteMiddleware> $middleware
+    ): HttpRequestHandler {
         return array_reduce(
-            array_reverse($this->middleware()->toArray()),
+            array_reverse($middleware->toArray()),
             Combinatorial::flip1(Revolver::add()),
-            $this
+            $init
         );
     }
 
