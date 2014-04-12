@@ -26,5 +26,11 @@ interface Finishable<T> extends SemiGroup<Finishable<T>>,
     const DONE = 0;
     const MORE = 1;
 
+    public function map<Tb>((function(T): Tb) $f): Finishable<Tb>;
+
+    public function ap<Tb, Tc>(Applicative<Tb> $other): Finishable<Tc>;
+
+    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Finishable<Tb>;
+
     public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb;
 }

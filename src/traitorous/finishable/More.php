@@ -22,7 +22,7 @@ final class More<T> implements Finishable<T> {
         );
     }
 
-    public function ap<Tb, Tc>(Applicative<Tb> $next): Applicative<Tc> {
+    public function ap<Tb, Tc>(Applicative<Tb> $next): Finishable<Tc> {
         // UNSAFE
         return $next->cata(
             ($y) ==> {

@@ -25,6 +25,12 @@ interface Validation<Te, Ts> extends Functor<Ts>,
     const FAILURE = 0;
     const SUCCESS = 1;
 
+    public function map<Tb>((function(Ts): Tb) $f): Validation<Te, Tb>;
+
+    public function ap<Tb, Tc>(Applicative<Tb> $other): Validation<Te, Tc>;
+
+    public function flatMap<Tb>((function(Ts): Monad<Tb>) $f): Validation<Te, Tb>;
+
     public function cata<Tb>((function(Te): Tb) $failure,
                              (function(Ts): Tb) $success): Tb;
 

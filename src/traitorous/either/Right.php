@@ -12,7 +12,7 @@ final class Right<Tl, Tr> implements Either<Tl, Tr> {
 
     public function __construct(private Tr $_inner) { }
 
-    public function ap<Tb, Tc>(Applicative<Tb> $next): Applicative<Tc> {
+    public function ap<Tb, Tc>(Applicative<Tb> $next): Either<Tl, Tc> {
         // UNSAFE
         return $next->map($this->_inner);
     }
