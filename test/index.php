@@ -224,16 +224,35 @@ final class PostMiddleware extends HttpRouteMiddleware {
 
 }
 
+final class GlobalMiddleware extends HttpRouteMiddleware {
+
+    public function intercept(HttpRequest $request,
+                              HttpRequestHandler $next): HttpResponse
+    {
+        echo "[Global: before] ";
+        $result = $next->handle($request)->view()->render();
+        return new OkResponse(
+            new StringView("{$result} [Global: after]")
+        );
+    }
+
+}
+
 $test1 = new ImmutableVector();
 $test2 = new ImmutableMap();
 
-$default = new Missing();
+$middleware = Vector {
+    new GlobalMiddleware()
+};
+
 $router  = new HttpRouter(Vector {
     new Index(),
     new Regex(),
     new Login()
 });
 
-$app = new Traitorous($router, $default);
+$default = new Missing();
+
+$app = new Traitorous($middleware, $router, $default);
 
 $app->run();
