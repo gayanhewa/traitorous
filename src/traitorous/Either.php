@@ -10,6 +10,9 @@ use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\LeftMappable;
 use traitorous\outlaw\Unwrappable;
+use traitorous\outlaw\Invertable;
+use traitorous\option\ProjectableToOption;
+use traitorous\validation\ProjectableToValidation;
 
 interface Either<Tl, Tr> extends Functor<Tr>,
                                  Applicative<Tr>,
@@ -19,7 +22,10 @@ interface Either<Tl, Tr> extends Functor<Tr>,
                                  Show,
                                  LeftMappable<Tl>,
                                  Unwrappable<Tr>,
-                                 KeyedEnum
+                                 KeyedEnum,
+                                 Invertable<Either<Tr, Tl>>,
+                                 ProjectableToOption<Tr>,
+                                 ProjectableToValidation<Tr>
 {
     const LEFT  = 0;
     const RIGHT = 1;

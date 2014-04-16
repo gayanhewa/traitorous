@@ -10,6 +10,9 @@ use traitorous\outlaw\KeyedEnum;
 use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\LeftMappable;
+use traitorous\outlaw\Invertable;
+use traitorous\option\ProjectableToOption;
+use traitorous\either\ProjectableToEither;
 
 interface Validation<Te, Ts> extends Functor<Ts>,
                                      Applicative<Ts>,
@@ -19,7 +22,10 @@ interface Validation<Te, Ts> extends Functor<Ts>,
                                      Ord<Validation<Te, Ts>>,
                                      Show,
                                      LeftMappable<Te>,
-                                     KeyedEnum
+                                     KeyedEnum,
+                                     Invertable<Validation<Ts, Te>>,
+                                     ProjectableToOption<Ts>,
+                                     ProjectableToEither<Ts>
 {
 
     const FAILURE = 0;

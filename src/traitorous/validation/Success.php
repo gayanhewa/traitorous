@@ -8,6 +8,12 @@ use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\Validation;
+use traitorous\Option;
+use traitorous\option\Some;
+use traitorous\option\None;
+use traitorous\Either;
+use traitorous\either\Left;
+use traitorous\either\Right;
 
 final class Success<Te, Ts> implements Validation<Te, Ts> {
 
@@ -55,6 +61,22 @@ final class Success<Te, Ts> implements Validation<Te, Ts> {
             ($y) ==> Ord::GREATER,
             ($y) ==> $this->_x->compare($y)
         );
+    }
+
+    public function invert(): Validation<Ts, Te> {
+        return new Failure($this->_x);
+    }
+
+    public function toOption(): Option<Ts> {
+        return new Some($this->_x);
+    }
+
+    public function toRight<Ta>((function():Ta) $left): Either<Ta, Ts> {
+        return new Right($this->_x);
+    }
+
+    public function toLeft<Ta>((function():Ta) $right): Either<Ts, Ta> {
+        return new Left($this->_x);
     }
 
     public function show(): string {

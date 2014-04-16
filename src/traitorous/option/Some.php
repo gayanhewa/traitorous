@@ -10,6 +10,12 @@ use traitorous\outlaw\Add;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
+use traitorous\Either;
+use traitorous\either\Left;
+use traitorous\either\Right;
+use traitorous\Validation;
+use traitorous\validation\Success;
+use traitorous\validation\Failure;
 
 final class Some<T> implements Option<T> {
 
@@ -56,6 +62,22 @@ final class Some<T> implements Option<T> {
 
     public function mplus(MonadPlus<T> $other): this {
         return $this;
+    }
+
+    public function toRight<Ta>((function():Ta) $left): Either<Ta, T> {
+        return new Right($this->_inner);
+    }
+
+    public function toLeft<Ta>((function():Ta) $right): Either<T, Ta> {
+        return new Left($this->_inner);
+    }
+
+    public function toSuccess<Ta>((function():Ta) $failure): Validation<Ta, T> {
+        return new Success($this->_inner);
+    }
+
+    public function toFailure<Ta>((function():Ta) $success): Validation<T, Ta> {
+        return new Failure($this->_inner);
     }
 
     public function show(): string {

@@ -7,6 +7,11 @@ use traitorous\Either;
 use traitorous\outlaw\Eq;
 use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
+use traitorous\Option;
+use traitorous\option\None;
+use traitorous\Validation;
+use traitorous\validation\Success;
+use traitorous\validation\Failure;
 
 final class Left<Tl, Tr> implements Either<Tl, Tr> {
 
@@ -49,6 +54,22 @@ final class Left<Tl, Tr> implements Either<Tl, Tr> {
             ($n) ==> $this->_inner->compare($n),
             ($_) ==> Ord::LESS
         );
+    }
+
+    public function invert(): Either<Tr, Tl> {
+        return new Right($this->_inner);
+    }
+
+    public function toOption(): Option<Tr> {
+        return new None();
+    }
+
+    public function toSuccess<Ta>((function():Ta) $f): Validation<Ta, Tr> {
+        return new Failure($f());
+    }
+
+    public function toFailure<Ta>((function():Ta) $s): Validation<Tr, Ta> {
+        return new Success($s());
     }
 
     public function getOrElse((function(): Tr) $f): Tr {

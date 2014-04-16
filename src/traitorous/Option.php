@@ -15,6 +15,8 @@ use traitorous\outlaw\KeyedEnum;
 use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\Unwrappable;
+use traitorous\either\ProjectableToEither;
+use traitorous\validation\ProjectableToValidation;
 
 interface Option<T> extends SemiGroup<Option<T>>,
                             Monoid<Option<T>>,
@@ -29,7 +31,9 @@ interface Option<T> extends SemiGroup<Option<T>>,
                             Container,
                             Unwrappable<T>,
                             Filterable<T, Option<T>>,
-                            KeyedEnum
+                            KeyedEnum,
+                            ProjectableToEither<T>,
+                            ProjectableToValidation<T>
 
 {
     const NONE = 0;
