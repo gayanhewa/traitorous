@@ -10,48 +10,11 @@ use traitorous\outlaw\Ord;
 use traitorous\outlaw\Show;
 use traitorous\outlaw\Zero;
 
-final class More<T> implements Finishable<T> {
+final class More<Tm, Td> implements Finishable<Tm, Td> {
 
-    public function __construct(private T $_x): void { }
+    public function __construct(private Tm $_x): void { }
 
-    public function add(Finishable<T> $other): Finishable<T> {
-        invariant($this->_x instanceof Add, "Expected More to contain an Add");
-        return $other->cata(
-            ($y) ==> new Done($this->_x->add($y)),
-            ($y) ==> new More($this->_x->add($y))
-        );
-    }
-
-    public function ap<Tb, Tc>(Applicative<Tb> $next): Finishable<Tc> {
-        // UNSAFE
-        return $next->cata(
-            ($y) ==> {
-                $f = $this->_x; /* @var callable $f */
-                return new Done($f($y));
-            },
-            ($y) ==> {
-                $f = $this->_x; /* @var callable $f */
-                return new More($f($y));
-            }
-        );
-    }
-
-    public function map<Tb>((function(T): Tb) $f): Finishable<Tb> {
-        return new More($f($this->_x));
-    }
-
-    public function flatMap<Tb>((function(T): Monad<Tb>) $f): Finishable<Tb> {
-        $result = $f($this->_x);
-        invariant($result instanceof Finishable, "Expected to return a Finishable<Tb>");
-        return $result;
-    }
-
-    public function zero(): this {
-        invariant($this->_x instanceof Zero, "Expected More to contain an Zero");
-        return new More($this->_x->zero());
-    }
-
-    public function equals(Finishable<T> $other): bool {
+    public function equals(Finishable<Tm, Td> $other): bool {
         invariant($this->_x instanceof Eq, "Expected More to contain an Eq");
         return $other->cata(
             ($y) ==> false,
@@ -63,7 +26,7 @@ final class More<T> implements Finishable<T> {
         return Finishable::MORE;
     }
 
-    public function compare(Finishable<T> $other): int {
+    public function compare(Finishable<Tm, Td> $other): int {
         invariant($this->_x instanceof Ord, "Expected More to contain an Ord");
         return $other->cata(
             ($y) ==> Ord::LESS,
@@ -78,11 +41,7 @@ final class More<T> implements Finishable<T> {
         return "More({$inner})";
     }
 
-    public function unbox(): T {
-        return $this->_x;
-    }
-
-    public function cata<Tb>((function(T): Tb) $done, (function(T): Tb) $more): Tb {
+    public function cata<Tb>((function(Td): Tb) $done, (function(Tm): Tb) $more): Tb {
         return $more($this->_x);
     }
 
