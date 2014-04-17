@@ -15,11 +15,17 @@ final class More<Tm, Td> implements Finishable<Tm, Td> {
     public function __construct(private Tm $_x): void { }
 
     public function equals(Finishable<Tm, Td> $other): bool {
-        invariant($this->_x instanceof Eq, "Expected More to contain an Eq");
-        return $other->cata(
-            ($y) ==> false,
-            ($y) ==> $this->_x->equals($y)
-        );
+        if ($this->_x instanceof Eq) {
+            return $other->cata(
+                ($y) ==> false,
+                ($y) ==> $this->_x->equals($y)
+            );
+        } else {
+            return $other->cata(
+                ($y) ==> false,
+                ($y) ==> $this->_x === $y
+            );
+        }
     }
 
     public function getEnumKey(): int {

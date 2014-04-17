@@ -116,11 +116,17 @@ final class Some<T> implements Option<T> {
     }
 
     public function equals(Option<T> $other): bool {
-        invariant($this->_inner instanceof Eq, "Expected to contain an Eq");
-        return $other->cata(
-            (  ) ==> false,
-            ($n) ==> $this->_inner->equals($n)
-        );
+        if ($this->_inner instanceof Eq) {
+            return $other->cata(
+                (  ) ==> false,
+                ($n) ==> $this->_inner->equals($n)
+            );
+        } else {
+            return $other->cata(
+                (  ) ==> false,
+                ($n) ==> $this->_inner === $n
+            );
+        }
     }
 
     public function compare(Option<T> $other): int {

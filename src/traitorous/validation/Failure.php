@@ -39,11 +39,17 @@ final class Failure<Te, Ts> implements Validation<Te, Ts> {
     }
 
     public function equals(Validation<Te, Ts> $other): bool {
-        invariant($this->_x instanceof Eq, "Expected to contain an Eq");
-        return $this->cata(
-            ($y) ==> $this->_x->equals($y),
-            ($y) ==> false
-        );
+        if ($this->_x instanceof Eq) {
+            return $this->cata(
+                ($y) ==> $this->_x->equals($y),
+                ($y) ==> false
+            );
+        } else {
+            return $this->cata(
+                ($y) ==> $this->_x === $y,
+                ($y) ==> false
+            );
+        }
     }
 
     public function getEnumKey(): int {

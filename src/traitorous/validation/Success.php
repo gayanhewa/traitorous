@@ -44,11 +44,17 @@ final class Success<Te, Ts> implements Validation<Te, Ts> {
     }
 
     public function equals(Validation<Te, Ts> $other): bool {
-        invariant($this->_x instanceof Eq, "Expected to contain an Eq");
-        return $this->cata(
-            ($y) ==> false,
-            ($y) ==> $this->_x->equals($y)
-        );
+        if ($this->_x instanceof Eq) {
+            return $this->cata(
+                ($y) ==> false,
+                ($y) ==> $this->_x->equals($y)
+            );
+        } else {
+            return $this->cata(
+                ($y) ==> false,
+                ($y) ==> $this->_x === $y
+            );
+        }
     }
 
     public function getEnumKey(): int {

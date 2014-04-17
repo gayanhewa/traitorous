@@ -24,10 +24,17 @@ final class Right<Tl, Tr> implements Either<Tl, Tr> {
 
     public function equals(Either<Tl, Tr> $other): bool {
         invariant($this->_inner instanceof Eq, "Expected Left to contain an Eq");
-        return $other->cata(
-            ($_) ==> false,
-            ($n) ==> $this->_inner->equals($n)
-        );
+        if ($this->_inner instanceof Eq) {
+            return $other->cata(
+                ($_) ==> false,
+                ($n) ==> $this->_inner->equals($n)
+            );
+        } else {
+            return $other->cata(
+                ($_) ==> false,
+                ($n) ==> $this->_inner === $n
+            );
+        }
     }
 
     public function map<Tb>((function(Tr): Tb) $f): Either<Tl, Tb> {

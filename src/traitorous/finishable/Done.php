@@ -15,11 +15,17 @@ final class Done<Tm, Td> implements Finishable<Tm, Td> {
     public function __construct(private Td $_x) { }
 
     public function equals(Finishable<Tm, Td> $other): bool {
-        invariant($this->_x instanceof Eq, "Expected Done to contain an Eq");
-        return $other->cata(
-            ($y) ==> $this->_x->equals($y),
-            ($y) ==> false
-        );
+        if ($this->_x instanceof Eq) {
+            return $other->cata(
+                ($y) ==> $this->_x->equals($y),
+                ($y) ==> false
+            );
+        } else {
+            return $other->cata(
+                ($y) ==> $this->_x === $y,
+                ($y) ==> false
+            );
+        }
     }
 
     public function getEnumKey(): int {
