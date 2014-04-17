@@ -42,9 +42,9 @@ abstract class Form<T> {
             })
             ->flatMap(($_) ==> {
                 return $this->toDomainObject($data)->cata(
-                    () ==> new Failure(new static(null, new FormErrors(new GeneralFormError(
-                        "Failed converting form."
-                    )))),
+                    () ==> new Failure(new static(null, new FormErrors(Vector {
+                        new GeneralFormError("Failed converting form.")
+                    }))),
                     ($t) ==> new Success($t)
                 );
             });
@@ -72,6 +72,12 @@ abstract class Form<T> {
         } else {
             return $this->_errors->errors();
         }
+    }
+
+    public static function fromError(string $error): Form<T> {
+        return new static(null, new FormErrors(Vector {
+            new GeneralFormError($error)
+        }));
     }
 
 }
